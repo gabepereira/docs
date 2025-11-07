@@ -1,0 +1,577 @@
+---
+title: "Pricing & Purchase"
+description: "Credit packages, pricing details, purchasing guide, and auto-recharge setup"
+---
+
+## Credit Packages
+
+Choose the package that fits your usage. All packages include the same features - you're only paying for volume.
+
+<CardGroup cols={2}>
+  <Card title="STARTER" icon="rocket">
+    **20,000 Credits**
+
+    $29.90
+
+    $1.50 per 1,000 credits
+
+    Perfect for testing and small applications
+  </Card>
+
+  <Card title="GROWTH" icon="chart-line">
+    **100,000 Credits**
+
+    $59.90
+
+    $0.60 per 1,000 credits
+
+    **60% cheaper than STARTER**
+
+    Great for growing production apps
+  </Card>
+
+  <Card title="BUSINESS" icon="briefcase">
+    **500,000 Credits**
+
+    $199.90
+
+    $0.40 per 1,000 credits
+
+    **73% cheaper than STARTER**
+
+    Built for established platforms
+  </Card>
+
+  <Card title="ENTERPRISE" icon="building">
+    **2,000,000 Credits**
+
+    $599.90
+
+    $0.30 per 1,000 credits
+
+    **80% cheaper than STARTER**
+
+    High-volume production systems
+  </Card>
+
+  <Card title="WHALE" icon="whale">
+    **10,000,000 Credits**
+
+    $999.90
+
+    $0.10 per 1,000 credits
+
+    **93% cheaper than STARTER**
+
+    Enterprise scale applications
+  </Card>
+
+  <Card title="Custom" icon="handshake">
+    **50M+ Credits**
+
+    Contact us
+
+    Custom pricing available
+
+    Dedicated support, SLAs, custom integrations
+  </Card>
+</CardGroup>
+
+<Info>
+  **All packages include:**
+  - Access to all API endpoints
+  - AI predictions and Mr. Doge Picks
+  - Real-time live data
+  - No expiration on credits
+  - Same fast response times
+</Info>
+
+## Endpoint Costs
+
+### Free Endpoints (0 Credits)
+
+These endpoints are completely free and don't consume any credits:
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /odds/health` | API health check |
+| `GET /odds/regions` | List available regions/countries |
+| `GET /odds/competitions` | List competitions by region |
+| `GET /odds/stats` | System-wide statistics |
+
+### Standard Endpoints (1 Credit)
+
+Most endpoints cost **1 credit** per request:
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /odds/events` | List events with odds |
+| `GET /odds/events/:id` | Single event details |
+| `GET /odds/live-events` | Real-time live events |
+| `GET /odds/events/:id/markets` | Markets for an event |
+| `GET /odds/events/:id/result` | Event final result |
+| `GET /odds/events/:id/status` | Event betting status |
+| `GET /odds/teams` | Search teams |
+| `GET /odds/bet-items/:id/odds-movement` | Odds movement for bet |
+
+### Premium Endpoints (2-10 Credits)
+
+Advanced features with higher computational costs:
+
+| Endpoint | Cost | Description |
+|----------|------|-------------|
+| `GET /odds/trending-events` | Most viewed events |
+| `GET /odds/events/:id/live-odds` | **2 credits** | Current live odds |
+| `GET /ai/betting-recommendations` | **2 credits** | Top value bets with edge analysis |
+| `GET /ai/mr-doge-picks` | **10 credits** | Featured parlay picks with AI analysis |
+
+<Note>
+  Costs are subject to change. Check the `X-Credits-Consumed` response header to see the actual cost of each request.
+</Note>
+
+## How to Purchase Credits
+
+Buying credits is quick and easy:
+
+<Steps>
+  <Step title="Log In to Your Dashboard">
+    Go to [mrdoge.co/dashboard](https://mrdoge.co/dashboard) and sign in with your account.
+
+    If you don't have an account yet, [sign up here](https://mrdoge.co/register) - it's free and comes with 500 credits!
+  </Step>
+
+  <Step title="Navigate to Credits">
+    From your dashboard, click on **Credits** or **Buy Credits** in the navigation menu.
+
+    You'll see your current credit balance and available packages.
+  </Step>
+
+  <Step title="Choose Your Package">
+    Select the credit package that best fits your needs:
+
+    - **STARTER** (20,000 credits) - $29.90
+    - **GROWTH** (100,000 credits) - $59.90
+    - **BUSINESS** (500,000 credits) - $199.90
+    - **ENTERPRISE** (2,000,000 credits) - $599.90
+    - **WHALE** (10,000,000 credits) - $999.90
+
+    <Tip>
+      Not sure which package? Start with STARTER and upgrade later. Credits never expire, so you can always buy more!
+    </Tip>
+  </Step>
+
+  <Step title="Review Your Order">
+    Check the order summary:
+    - Package name and credit amount
+    - Price before tax
+    - Applicable taxes (varies by location)
+    - **Total amount** to be charged
+
+    Make sure everything looks correct before proceeding.
+  </Step>
+
+  <Step title="Enter Payment Information">
+    We use **Stripe** for secure payment processing. Enter your:
+    - Card number (credit or debit)
+    - Expiration date
+    - CVC security code
+    - Billing address
+
+    <Info>
+      **Your payment information is secure.** We use Stripe for PCI-compliant payment processing and never store your card details.
+    </Info>
+  </Step>
+
+  <Step title="Complete Purchase">
+    Click **Purchase** or **Pay Now** to complete the transaction.
+
+    You'll see a confirmation message when the payment is successful.
+  </Step>
+
+  <Step title="Credits Added Instantly">
+    **Your credits are added within seconds!**
+
+    - Check your dashboard to see the updated balance
+    - You'll receive a confirmation email with:
+      - Receipt and invoice
+      - Credits purchased
+      - New balance
+      - Transaction ID
+
+    You can start using the API immediately with your new credits.
+  </Step>
+</Steps>
+
+## Auto-Recharge
+
+Auto-Recharge automatically purchases credits when your balance drops below a threshold you set. Never worry about running out of credits or API downtime.
+
+<Info>
+  **Set it and forget it!** Once configured, auto-recharge runs in the background and keeps your API running 24/7.
+</Info>
+
+### How Auto-Recharge Works
+
+<Steps>
+  <Step title="You Set a Threshold">
+    Choose when to trigger auto-recharge (e.g., when balance < 1,000 credits)
+  </Step>
+
+  <Step title="You Choose a Package">
+    Select which credit package to purchase automatically (e.g., GROWTH - 100,000 credits)
+  </Step>
+
+  <Step title="We Monitor Your Balance">
+    Our system checks your credit balance after each API request
+  </Step>
+
+  <Step title="Auto-Purchase Triggers">
+    When balance drops below threshold, we automatically:
+    - Charge your saved payment method
+    - Add credits to your account
+    - Send you a confirmation email
+  </Step>
+
+  <Step title="You Keep Running">
+    Your API continues working without interruption. You'll never see a 402 error!
+  </Step>
+</Steps>
+
+### Setting Up Auto-Recharge
+
+1. Log in to [mrdoge.co/dashboard](https://mrdoge.co/dashboard)
+2. Go to **Credits → Auto-Recharge Settings**
+3. Toggle **Enable Auto-Recharge** to ON
+4. Configure your settings:
+   - **Threshold:** When to trigger (e.g., 1,000 credits)
+   - **Package:** Which package to buy (e.g., GROWTH)
+   - **Payment Method:** Select saved card
+5. Click **Save Settings**
+
+<Check>
+  **That's it!** Auto-recharge is now active.
+</Check>
+
+### Recommended Thresholds
+
+| Threshold | Best For | Example |
+|-----------|----------|---------|
+| **100 credits** | Very low traffic, cost-sensitive | Hobby projects, testing |
+| **1,000 credits** | Low-medium traffic | Small production apps |
+| **5,000 credits** | Medium traffic | Growing applications |
+| **10,000 credits** | High traffic | Established platforms |
+| **50,000 credits** | Very high traffic | Enterprise systems |
+
+<Tip>
+  **Recommended:** Set threshold to **2-3 days worth** of typical usage. This prevents frequent charges while ensuring you never run out.
+</Tip>
+
+### Example Auto-Recharge Configurations
+
+<AccordionGroup>
+  <Accordion title="Small App (1,000 credits/day)" icon="mobile">
+    **Recommended Settings:**
+    - Threshold: 5,000 credits
+    - Package: GROWTH (100,000 credits)
+    - Cost: $59.90 every ~95 days
+
+    **Why this works:**
+    - 5 days buffer before running out
+    - Recharges every 3+ months
+    - Only ~$180/year
+  </Accordion>
+
+  <Accordion title="Medium App (5,000 credits/day)" icon="chart-simple">
+    **Recommended Settings:**
+    - Threshold: 25,000 credits
+    - Package: BUSINESS (500,000 credits)
+    - Cost: $199.90 every ~95 days
+
+    **Why this works:**
+    - 5 days buffer
+    - Recharges quarterly
+    - ~$600/year
+  </Accordion>
+
+  <Accordion title="Large Platform (20,000 credits/day)" icon="server">
+    **Recommended Settings:**
+    - Threshold: 100,000 credits
+    - Package: WHALE (10,000,000 credits)
+    - Cost: $999.90 every ~495 days
+
+    **Why this works:**
+    - 5 days buffer
+    - Recharges once every 16+ months
+    - Best per-credit pricing
+  </Accordion>
+</AccordionGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Payment Declined" icon="credit-card-front">
+    **If your payment is declined:**
+
+    1. **Check with your bank:**
+       - Some banks block international transactions
+       - Call your bank to authorize the charge
+
+    2. **Verify card details:**
+       - Card number correct
+       - Expiration date valid
+       - CVC code accurate
+       - Sufficient funds available
+
+    3. **Try a different card:**
+       - Use another credit/debit card
+       - Try Apple Pay or Google Pay
+
+    4. **Contact support:**
+       - If issues persist, email support@mrdoge.co
+       - Include error message if shown
+  </Accordion>
+
+  <Accordion title="Credits Not Added" icon="clock">
+    **If credits don't appear after purchase:**
+
+    1. **Wait 60 seconds:**
+       - Usually instant, but can take up to 1 minute
+       - Refresh your dashboard page
+
+    2. **Check email:**
+       - Look for confirmation email
+       - If no email, payment may not have processed
+
+    3. **Verify payment:**
+       - Check your bank/card statement
+       - Was the charge successful?
+
+    4. **Contact support immediately:**
+       - Email support@mrdoge.co
+       - Include transaction ID or confirmation number
+       - We'll add credits manually if needed
+  </Accordion>
+
+  <Accordion title="Auto-Recharge Failed" icon="triangle-exclamation">
+    **If auto-recharge fails:**
+
+    Common causes:
+    - Card declined (insufficient funds, expired card)
+    - Payment method removed from account
+    - Bank blocked the transaction
+
+    **What happens:**
+    - You'll receive email: "Auto-recharge failed"
+    - API will return 402 errors when balance hits 0
+    - You must manually purchase credits
+
+    **How to fix:**
+    1. Check email for failure reason
+    2. Update payment method if card expired
+    3. Contact bank if transaction was blocked
+    4. Manually purchase credits to resume service
+    5. Fix payment method, then re-enable auto-recharge
+  </Accordion>
+
+  <Accordion title="Wrong Package Purchased" icon="triangle-exclamation">
+    **Accidentally bought the wrong package?**
+
+    Contact support@mrdoge.co **within 24 hours** with:
+    - Transaction ID
+    - Package you purchased
+    - Package you intended to purchase
+
+    We may be able to:
+    - Refund and re-purchase correct package
+    - Adjust credits manually
+    - Or keep the credits (they never expire!)
+  </Accordion>
+
+  <Accordion title="Duplicate Charge" icon="copy">
+    **Charged twice for the same purchase?**
+
+    This can happen if you:
+    - Clicked "Purchase" multiple times
+    - Had a page timeout and retried
+
+    **Check:**
+    - Your credit balance (did you receive double credits?)
+    - Bank statement (are there two charges?)
+
+    **If duplicate charge:**
+    - Email support@mrdoge.co immediately
+    - Include both transaction IDs
+    - We'll issue a refund for the duplicate within 5-7 business days
+  </Accordion>
+
+  <Accordion title="Invoice/Receipt Not Received" icon="envelope">
+    **Didn't receive your invoice email?**
+
+    1. **Check spam/junk folder:**
+       - Email from billing@mrdoge.co or noreply@stripe.com
+       - Mark as "Not Spam" if found
+
+    2. **Download from dashboard:**
+       - Go to Billing → Invoices
+       - Find your purchase
+       - Click "Download PDF"
+
+    3. **Request resend:**
+       - Email support@mrdoge.co
+       - Include date and amount of purchase
+       - We'll resend invoice to your email
+  </Accordion>
+</AccordionGroup>
+
+## Refund Policy
+
+<Warning>
+  **Credits are generally non-refundable** because they never expire and can be used at any time.
+</Warning>
+
+**Exceptions where refunds may be issued:**
+
+1. **Billing errors:**
+   - Duplicate charges
+   - Incorrect amount charged
+   - Technical glitches
+
+2. **Service issues:**
+   - Extended API outages that prevented usage
+   - Bugs that consumed excessive credits unfairly
+
+3. **Accidental purchases:**
+   - Must request within 24 hours
+   - Account must show no/minimal API usage with purchased credits
+   - Reviewed case-by-case
+
+**To request a refund:**
+- Email support@mrdoge.co within 24-48 hours
+- Include transaction ID and reason
+- Refunds processed within 5-7 business days
+
+## Enterprise & Custom Pricing
+
+For very large credit purchases or enterprise needs:
+
+<CardGroup cols={2}>
+  <Card title="Custom Pricing" icon="handshake">
+    **50M+ credits**
+
+    Contact sales@mrdoge.co for:
+    - Volume discounts beyond WHALE
+    - Custom payment terms
+    - Multi-year agreements
+    - Flexible billing options
+  </Card>
+
+  <Card title="Enterprise Support" icon="headset">
+    **Dedicated assistance**
+
+    Enterprise packages include:
+    - Priority support channel
+    - Dedicated account manager
+    - Custom SLAs
+    - Technical integration help
+  </Card>
+
+  <Card title="Bank Transfers" icon="building-columns">
+    **Wire/ACH/SEPA**
+
+    For purchases $1,000+:
+    - Wire transfer instructions
+    - ACH (US domestic)
+    - SEPA (EU)
+    - 3-5 day processing time
+  </Card>
+
+  <Card title="Purchase Orders" icon="file-contract">
+    **PO accepted**
+
+    For WHALE+ packages:
+    - Email PO to sales@mrdoge.co
+    - Net 30 payment terms available
+    - Invoice sent separately
+  </Card>
+</CardGroup>
+
+## FAQs
+
+<AccordionGroup>
+  <Accordion title="Can I get a refund?" icon="money-bill-transfer">
+    Credits are generally non-refundable once purchased, as they never expire. However, we may issue refunds in cases of:
+    - Billing errors or duplicate charges
+    - Service outages that prevented API usage
+    - Bugs that caused excessive credit consumption
+
+    Contact support@mrdoge.co within 24 hours of purchase for refund requests.
+  </Accordion>
+
+  <Accordion title="Do you offer free trials?" icon="gift">
+    Every new account gets **500 free credits** to test the API! You can also use these free endpoints without consuming any credits:
+    - `/odds/regions`
+    - `/odds/competitions`
+    - `/odds/stats`
+    - And more!
+
+    When ready for production, start with the STARTER package ($29.90) for 20,000 credits.
+  </Accordion>
+
+  <Accordion title="Can I upgrade or downgrade?" icon="arrows-up-down">
+    There are no plans to upgrade or downgrade - just purchase more credits when you need them!
+
+    All credits stack in your account and never expire, so you can buy different packages at different times.
+  </Accordion>
+
+  <Accordion title="What if my card is declined during auto-recharge?" icon="credit-card-blank">
+    If auto-recharge fails:
+    - You'll receive failure notification email
+    - Auto-recharge will retry once after 1 hour
+    - If second attempt fails, auto-recharge disables
+    - You must manually purchase credits and fix payment method
+
+    **Your API will stop working** when balance hits 0 if auto-recharge fails.
+  </Accordion>
+
+  <Accordion title="Can I get an invoice for my purchase?" icon="file-invoice">
+    Yes! All purchases generate an automatic invoice sent to your email. You can also download invoices from the dashboard under **Billing → Invoices**.
+  </Accordion>
+
+  <Accordion title="Do you offer educational or non-profit discounts?" icon="graduation-cap">
+    Yes! We offer discounts for:
+    - Educational institutions
+    - Non-profit organizations
+    - Open-source projects
+    - Student developers
+
+    Contact sales@mrdoge.co with details about your organization.
+  </Accordion>
+
+  <Accordion title="Can I get a notification BEFORE auto-recharge triggers?" icon="bell">
+    **Currently no,** but this is on our roadmap!
+
+    For now, you receive notification immediately after auto-recharge completes.
+
+    You can monitor balance manually in dashboard or via API to predict when auto-recharge will trigger.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Credits Overview" icon="coins" href="/credits/overview">
+    Learn how credits work and best practices
+  </Card>
+
+  <Card title="Get Started" icon="rocket" href="/quickstart">
+    Make your first API request with your credits
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn how to create and manage API keys
+  </Card>
+
+  <Card title="Dashboard" icon="chart-line" href="https://mrdoge.co/dashboard">
+    Purchase credits and monitor usage
+  </Card>
+</CardGroup>

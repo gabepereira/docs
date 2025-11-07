@@ -1,0 +1,25 @@
+# Claude Instructions for Mr. Doge API Documentation
+
+## Project Context
+This is the documentation project for the Mr. Doge API, built with Mintlify.
+
+## Important Rules
+
+### 1. API Endpoint
+- **Always use**: `api.mrdoge.co`
+- **Never use**: `api.mrdoge.bet` or any other domain
+- This applies to all code examples, API references, and documentation
+
+### 2. API Name
+- **Correct name**: "Mr. Doge API" (with space and capital D)
+- **Incorrect names**: "MrDoge Odds API", "MrDoge API", "Mr Doge Odds API"
+- Use "Mr. Doge API" consistently throughout all documentation
+
+## Additional Guidelines
+- When adding new documentation, follow the existing structure and formatting
+- Use Mintlify MDX components (Card, CardGroup, Steps, Accordion, etc.)
+- Include code examples in multiple languages (bash, JavaScript, Python)
+- Always include practical examples and use cases
+- Keep tone professional but friendly
+
+## More instructions to be added...

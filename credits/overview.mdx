@@ -1,0 +1,281 @@
+---
+title: "Credits Overview"
+description: "Understanding how the Mr. Doge API credit system works"
+---
+
+## What Are Credits?
+
+Credits are the currency of the Mr. Doge API. Instead of monthly subscriptions or complex tier plans, you purchase credits once and use them as you make API requests. Think of credits like prepaid phone minutes - buy what you need, use when you want.
+
+<Info>
+  **1 credit = 1 API request** for most endpoints. No hidden fees, no monthly charges, no commitment.
+</Info>
+
+## Why Credits Instead of Subscriptions?
+
+<CardGroup cols={2}>
+  <Card title="Pay Only for What You Use" icon="hand-holding-dollar">
+    Don't waste money on monthly subscriptions when you have seasonal usage. Buy credits when you need them.
+  </Card>
+
+  <Card title="No Expiration" icon="infinity">
+    Credits never expire. Buy once, use over months or years. Perfect for hobby projects and irregular usage patterns.
+  </Card>
+
+  <Card title="Predictable Costs" icon="calculator">
+    Know exactly what each API call costs. No surprise bills at the end of the month.
+  </Card>
+
+  <Card title="Scale as You Grow" icon="chart-line-up">
+    Start small with 20,000 credits ($29.90) and scale up to millions as your usage grows.
+  </Card>
+</CardGroup>
+
+## How Credits Work
+
+<Steps>
+  <Step title="Purchase Credits">
+    Buy a credit package that fits your needs - from $29.90 to $999.90
+  </Step>
+
+  <Step title="Make API Requests">
+    Each API call automatically deducts credits based on the endpoint cost (usually 1 credit)
+  </Step>
+
+  <Step title="Track Usage">
+    Monitor your credit balance in real-time via response headers and the dashboard
+  </Step>
+
+  <Step title="Recharge When Needed">
+    Buy more credits manually or enable auto-recharge to never run out
+  </Step>
+</Steps>
+
+## Credit Consumption
+
+### Standard Endpoints (1 Credit)
+
+Most endpoints cost **1 credit** per request:
+
+- `/odds/events` - Get upcoming events with odds
+- `/odds/live-events` - Real-time live events
+- `/odds/events/:eventId` - Single event details
+- `/odds/teams` - Search teams
+- `/ai/betting-recommendations` - AI recommendations (filtered)
+- And 20+ more standard endpoints
+
+### Free Endpoints (0 Credits)
+
+Some public endpoints are completely free:
+
+- `/odds/health` - API health check
+- `/odds/regions` - Available regions/countries
+- `/odds/competitions` - List competitions
+- `/odds/stats` - System statistics
+
+### Premium Endpoints (2-10 Credits)
+
+Advanced features cost more:
+
+- `/odds/odds-history` - **2 credits** - Historical odds data
+- `/odds/events/:id/live-odds` - **2 credits** - Current live odds
+- `/ai/value-opportunities` - **5 credits** - Best value bets with edge analysis
+- `/ai/mr-doge-picks` - **10 credits** - Featured parlay picks with AI analysis
+
+<Card title="Full Pricing Details" icon="tag" href="/credits/pricing">
+  See complete pricing, packages, and how to purchase credits
+</Card>
+
+## Monitoring Your Credits
+
+### Response Headers
+
+Every API response includes your credit status:
+
+```bash
+HTTP/1.1 200 OK
+X-Credits-Remaining: 19850
+X-Credits-Consumed: 1
+X-Auto-Recharge: false
+```
+
+**Example in code:**
+```javascript
+const response = await fetch('https://api.mrdoge.co/odds/events', {
+  headers: { 'Authorization': 'Bearer sk_live_...' }
+});
+
+console.log('Remaining:', response.headers.get('X-Credits-Remaining')); // 19850
+console.log('This request cost:', response.headers.get('X-Credits-Consumed')); // 1
+```
+
+<Tip>
+  You can also monitor your credit balance and usage analytics in the [dashboard](https://mrdoge.co/dashboard).
+</Tip>
+
+## What Happens When Credits Run Out?
+
+When your balance reaches **0 credits**, the API will:
+
+1. **Return HTTP 402** (Payment Required)
+2. **Provide error details:**
+   ```json
+   {
+     "statusCode": 402,
+     "message": "Insufficient credits",
+     "creditsRequired": 1,
+     "creditsRemaining": 0,
+     "error": "Payment Required"
+   }
+   ```
+3. **Stop processing requests** until credits are added
+
+### Solutions
+
+<Tabs>
+  <Tab title="Manual Purchase">
+    1. Log in to the dashboard
+    2. Go to **Credits → Purchase**
+    3. Select a package
+    4. Complete payment
+    5. Credits are added within seconds
+  </Tab>
+
+  <Tab title="Auto-Recharge (Recommended)">
+    1. Enable auto-recharge in dashboard
+    2. Set your threshold (e.g., 1,000 credits)
+    3. Choose auto-recharge package
+    4. When balance drops below threshold, we automatically charge your card and add credits
+    5. **Never run out** of credits again!
+  </Tab>
+</Tabs>
+
+<Card title="Setup Auto-Recharge" icon="arrows-rotate" href="/credits/pricing#auto-recharge">
+  Configure automatic credit top-ups
+</Card>
+
+## Optimizing Credit Usage
+
+Save credits with these best practices:
+
+<CardGroup cols={2}>
+  <Card title="Cache Responses" icon="database">
+    Store frequently-accessed data (regions, competitions) locally instead of fetching repeatedly.
+  </Card>
+
+  <Card title="Use Free Endpoints" icon="gift">
+    Leverage free endpoints like `/odds/regions` and `/odds/stats` for reference data.
+  </Card>
+
+  <Card title="Batch Requests" icon="layer-group">
+    Use filters to get multiple events in one request instead of calling events individually.
+  </Card>
+
+  <Card title="Smart Polling" icon="clock">
+    For live data, poll every 10-20 seconds instead of every second.
+  </Card>
+</CardGroup>
+
+### Example: Efficient vs. Inefficient
+
+<CodeGroup>
+```javascript ❌ Inefficient (100 credits)
+// Fetching 100 events individually
+for (let i = 0; i < 100; i++) {
+  await fetch(`https://api.mrdoge.co/odds/events/${eventIds[i]}`, {
+    headers: { 'Authorization': 'Bearer sk_live_...' }
+  }); // 100 requests = 100 credits
+}
+```
+
+```javascript ✅ Efficient (1 credit)
+// Fetch all events in one request with filters
+const response = await fetch(
+  'https://api.mrdoge.co/odds/events?competitionId=premier-league&limit=100',
+  { headers: { 'Authorization': 'Bearer sk_live_...' } }
+); // 1 request = 1 credit!
+```
+</CodeGroup>
+
+## Usage Examples
+
+Let's see how far credits go in real-world scenarios:
+
+<AccordionGroup>
+  <Accordion title="Small Betting App (STARTER - 20,000 credits)" icon="mobile">
+    **Daily Usage:**
+    - Fetch events 3 times/day: 3 credits
+    - Get trending events 2 times/day: 2 credits
+    - Fetch AI recommendations for 10 events: 10 credits
+    - **Total per day:** 15 credits
+    - **Package lasts:** ~3.6 years
+
+    Perfect for hobby projects or apps with < 1,000 users.
+  </Accordion>
+
+  <Accordion title="Medium Traffic Site (GROWTH - 100,000 credits)" icon="chart-simple">
+    **Daily Usage:**
+    - Fetch events every hour: 24 credits
+    - Live events every 5 minutes: 288 credits
+    - 50 AI recommendations: 50 credits
+    - **Total per day:** 362 credits
+    - **Package lasts:** ~276 days
+
+    Great for production apps with moderate traffic.
+  </Accordion>
+
+  <Accordion title="High Volume Platform (ENTERPRISE - 2M credits)" icon="server">
+    **Daily Usage:**
+    - Events endpoint: 1,000 requests = 1,000 credits
+    - Live odds: 5,000 requests = 5,000 credits
+    - AI picks: 200 requests = 2,000 credits
+    - **Total per day:** 8,000 credits
+    - **Package lasts:** ~250 days
+
+    Built for high-traffic betting platforms.
+  </Accordion>
+</AccordionGroup>
+
+## FAQs
+
+<AccordionGroup>
+  <Accordion title="Do credits ever expire?" icon="calendar-xmark">
+    **No, never.** Credits remain in your account indefinitely until you use them. Buy once, use whenever you want - even years later.
+  </Accordion>
+
+  <Accordion title="Can I get a refund if I don't use all my credits?" icon="money-bill-transfer">
+    **No.** Credits are like gift cards - non-refundable once purchased. However, since they never expire, you can use them at any time in the future.
+  </Accordion>
+
+  <Accordion title="What if I accidentally bought too many credits?" icon="circle-exclamation">
+    Contact support@mrdoge.co within 24 hours if you made a purchase error. We'll review on a case-by-case basis.
+  </Accordion>
+
+  <Accordion title="Can I transfer credits to another account?" icon="right-left">
+    **No.** Credits are tied to your account and cannot be transferred. For team/organization use, create a shared account.
+  </Accordion>
+
+  <Accordion title="Do unused credits roll over?" icon="rotate">
+    There's no concept of "rollover" because credits never expire. Every credit you purchase stays in your account forever.
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="View Pricing & Purchase" icon="tag" href="/credits/pricing">
+    See all packages, pricing details, and purchase credits
+  </Card>
+
+  <Card title="Get Started" icon="rocket" href="/quickstart">
+    Make your first API request with your credits
+  </Card>
+
+  <Card title="Authentication" icon="key" href="/authentication">
+    Learn how to create and manage API keys
+  </Card>
+
+  <Card title="Dashboard" icon="chart-line" href="https://mrdoge.co/dashboard">
+    Monitor usage and manage credits
+  </Card>
+</CardGroup>

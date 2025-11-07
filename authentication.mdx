@@ -1,0 +1,283 @@
+---
+title: "Authentication"
+description: "Learn how to authenticate your API requests using API keys and manage your credits"
+---
+
+## Overview
+
+The Mr. Doge API uses **API keys** with **Bearer token authentication** to secure access to endpoints. Every request must include your API key in the Authorization header, and credits are automatically deducted based on the endpoint you're calling.
+
+<Info>
+  No complicated OAuth flows or session management. Just include your API key in
+  each request header and you're good to go!
+</Info>
+
+## API Key Format
+
+All Mr. Doge API keys follow this format:
+
+```
+sk_live_followed_by_64_hexadecimal_characters
+```
+
+**Example:**
+
+```
+sk_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2
+```
+
+<Warning>
+  **Never commit API keys to version control** or share them publicly. Treat
+  them like passwords - they provide full access to your account and credits.
+</Warning>
+
+## Making Authenticated Requests
+
+Include your API key in the `Authorization` header with the `Bearer` scheme:
+
+<CodeGroup>
+```bash cURL
+curl -X GET "https://api.mrdoge.co/odds/events" \
+  -H "Authorization: Bearer sk_live_your_api_key_here"
+```
+
+```javascript JavaScript
+const response = await fetch("https://api.mrdoge.co/odds/events", {
+  headers: {
+    Authorization: "Bearer sk_live_your_api_key_here",
+  },
+});
+```
+
+```python Python
+import requests
+
+headers = {'Authorization': 'Bearer sk_live_your_api_key_here'}
+response = requests.get('https://api.mrdoge.co/odds/events', headers=headers)
+```
+
+```php PHP
+<?php
+$ch = curl_init('https://api.mrdoge.co/odds/events');
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Authorization: Bearer sk_live_your_api_key_here'
+]);
+$response = curl_exec($ch);
+?>
+```
+
+</CodeGroup>
+
+<Info>
+  Every API response includes headers showing your credit balance, consumption, and auto-recharge status. See [Monitoring Your Credits](/credits/overview#monitoring-your-credits) for details on tracking usage.
+</Info>
+
+## Creating API Keys
+
+<Steps>
+  <Step title="Access Your Dashboard">
+    Log in to [mrdoge.co](https://mrdoge.co/dashboard) and navigate to **API Keys**
+  </Step>
+
+  <Step title="Click Create New Key">
+    Select **Create New API Key** button
+  </Step>
+
+  <Step title="Name Your Key">
+    Enter a descriptive name to identify where this key will be used:
+    - `Production App`
+    - `Development Environment`
+    - `Mobile App iOS`
+    - `Testing Purposes`
+  </Step>
+
+  <Step title="Save Your Key">
+    Store it securely in:
+    - Environment variables (`.env` file)
+    - Secret management service (AWS Secrets Manager, Vault, etc.)
+    - Password manager
+  </Step>
+</Steps>
+
+<Warning>
+  **Maximum 10 API keys** per account. Delete unused keys to create new ones.
+</Warning>
+
+## Managing API Keys
+
+### Viewing Your Keys
+
+In the dashboard, you can see:
+
+- **Key Name** - The label you assigned
+- **Key Preview** - Last 12 characters (e.g., `sk_live_...d0e1f2`)
+- **Created Date** - When the key was generated
+- **Last Used** - Most recent API request timestamp
+- **Status** - Active or Inactive
+
+### Deactivating Keys
+
+If a key is compromised or no longer needed:
+
+1. Go to **Dashboard → API Keys**
+2. Find the key you want to deactivate
+3. Click **Deactivate** (or Delete icon)
+4. Confirm the action
+
+<Note>
+  Deactivated keys stop working immediately. Any requests using that key will
+  return a `401 Unauthorized` error.
+</Note>
+
+### Key Rotation Best Practices
+
+For security, rotate your API keys periodically:
+
+1. **Create a new API key** with a descriptive name (e.g., `Production App v2`)
+2. **Update your application** to use the new key
+3. **Test thoroughly** to ensure everything works
+4. **Deactivate the old key** after confirming the new one is working
+5. **Monitor usage** in the dashboard to verify the switch
+
+<Tip>
+  **Recommended rotation schedule**: Every 90 days for production keys, or
+  immediately if you suspect a key has been exposed.
+</Tip>
+
+## Credit-Based Authentication
+
+The Mr. Doge API uses a **credit-based pay-as-you-go** model instead of traditional rate limits.
+
+### How It Works
+
+1. **Purchase credits** in packages
+2. **Make API requests** - credits are automatically deducted
+3. **Monitor usage** via response headers and dashboard
+4. **Auto-recharge** (optional) when balance runs low
+
+### Endpoint Costs
+
+Most endpoints cost **1 credit** per request. Some specialized endpoints cost more:
+
+| Endpoint Category                                              | Cost per Request     |
+| -------------------------------------------------------------- | -------------------- |
+| No-cost endpoints (regions, competitions, health)              | **0 credits** (free) |
+| Standard events endpoints (`/odds/events`, `/odds/live-events`)| **1 credit**         |
+| Trending events endpoint (`/odds/trending-events`)             | **2 credits**        |
+| Specific event endpoint (`/odds/events/:eventId`)              | **1 credit**         |
+| AI recommendations (`/ai/betting-recommendations`)             | **2 credits**        |
+| AI predictions (`/ai/mr-doge-picks`)                           | **3 credits**        |
+
+<Card title="Understand Credits" icon="coins" href="/credits/overview">
+  Learn how credits work, pricing, purchasing, and auto-recharge
+</Card>
+
+## Security Best Practices
+
+### Environment Variables
+
+Store API keys in environment variables, never hardcode them:
+
+<CodeGroup>
+```javascript .env File
+# .env
+MRDOGE_API_KEY=sk_live_your_api_key_here
+```
+
+```javascript Node.js
+require("dotenv").config();
+
+const apiKey = process.env.MRDOGE_API_KEY;
+
+fetch("https://api.mrdoge.co/odds/events", {
+  headers: { Authorization: `Bearer ${apiKey}` },
+});
+```
+
+```python Python
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.getenv('MRDOGE_API_KEY')
+
+headers = {'Authorization': f'Bearer {api_key}'}
+```
+
+</CodeGroup>
+
+### Don't Expose Keys in Frontend
+
+<Warning>
+  **Never use API keys directly in client-side JavaScript** - they'll be visible
+  in browser dev tools and can be stolen.
+</Warning>
+
+**Instead:**
+
+- Create a **backend proxy** that makes API calls on behalf of your frontend
+- Use **serverless functions** (Vercel, Netlify, AWS Lambda) to keep keys secure
+- Implement **user authentication** in your app, then make API calls server-side
+
+**Example Architecture:**
+
+```
+Frontend (React/Vue/etc.)
+    ↓ HTTP request (no API key)
+Backend API (Node.js/Python/PHP)
+    ↓ HTTP request (with API key in server)
+Mr. Doge API
+```
+
+## FAQs
+
+<AccordionGroup>
+  <Accordion title="Can I use the same API key across multiple applications?" icon="question-circle">
+    **Yes**, but we recommend creating separate keys for each application/environment:
+    - Easier to track usage per application
+    - Rotate keys without affecting all apps
+    - Deactivate compromised keys in isolation
+  </Accordion>
+
+  <Accordion title="What happens if someone steals my API key?" icon="shield-exclamation">
+    **Immediately:**
+    1. Go to Dashboard → API Keys
+    2. Deactivate the compromised key
+    3. Create a new key
+    4. Update your application
+
+    The stolen key will stop working immediately. Monitor your usage for any suspicious activity.
+
+  </Accordion>
+
+  <Accordion title="Do API keys expire?" icon="clock">
+    **No**, API keys never expire. They remain active until you deactivate them manually.
+
+    However, we recommend rotating keys every 90 days for security best practices.
+
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Understand Credits" icon="coins" href="/credits/overview">
+    Learn how the credit system works and optimizes your usage
+  </Card>
+
+<Card title="View Pricing" icon="tag" href="/credits/pricing">
+  See all credit packages and per-endpoint costs
+</Card>
+
+<Card
+  title="Setup Auto-Recharge"
+  icon="arrows-rotate"
+  href="/credits/pricing#auto-recharge"
+>
+  Never run out of credits with automatic top-ups
+</Card>
+
+  <Card title="Dashboard Guide" icon="chart-line" href="/dashboard/api-keys">
+    Master API key management in the dashboard
+  </Card>
+</CardGroup>

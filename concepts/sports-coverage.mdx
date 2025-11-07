@@ -1,0 +1,275 @@
+---
+title: "Sports Coverage"
+description: "Supported sports, leagues, and betting markets in the Mr. Doge API"
+---
+
+## Supported Sports
+
+The Mr. Doge API provides comprehensive coverage across 8 major sports:
+
+<CardGroup cols={2}>
+  <Card title="Soccer" icon="futbol">
+    **Coverage**: 50+ leagues worldwide
+
+    Popular competitions:
+    - Premier League (England)
+    - La Liga (Spain)
+    - Serie A (Italy)
+    - Bundesliga (Germany)
+    - Ligue 1 (France)
+    - Champions League
+    - World Cup qualifiers
+  </Card>
+
+  <Card title="Basketball" icon="basketball">
+    **Coverage**: NBA, international leagues
+
+    Popular competitions:
+    - NBA
+    - EuroLeague
+    - FIBA competitions
+    - College Basketball (NCAA)
+  </Card>
+
+  <Card title="Baseball" icon="baseball">
+    **Coverage**: MLB and international
+
+    Popular competitions:
+    - MLB
+    - NPB (Japan)
+    - KBO (Korea)
+  </Card>
+
+  <Card title="American Football" icon="football">
+    **Coverage**: NFL, college football
+
+    Popular competitions:
+    - NFL
+    - NCAA Football
+  </Card>
+
+  <Card title="Handball" icon="hand-fist">
+    **Coverage**: European leagues
+
+    Popular competitions:
+    - EHF Champions League
+    - Bundesliga (Germany)
+    - Liga ASOBAL (Spain)
+  </Card>
+
+  <Card title="Tennis" icon="table-tennis-paddle-ball">
+    **Coverage**: ATP, WTA, Grand Slams
+
+    Popular tournaments:
+    - Grand Slams
+    - ATP Masters 1000
+    - WTA Premier events
+  </Card>
+
+  <Card title="Volleyball" icon="volleyball">
+    **Coverage**: International leagues
+
+    Popular competitions:
+    - CEV Champions League
+    - Italian SuperLega
+    - Brazilian Superliga
+  </Card>
+
+  <Card title="Ice Hockey" icon="hockey-puck">
+    **Coverage**: NHL, international
+
+    Popular competitions:
+    - NHL
+    - KHL (Russia)
+    - SHL (Sweden)
+  </Card>
+</CardGroup>
+
+## Market Types by Sport
+
+### Soccer Markets
+
+Soccer (Football) has the most comprehensive market coverage:
+
+#### Primary Markets
+
+| Market Type | Description | Example Outcomes |
+|-------------|-------------|------------------|
+| **Match Result** | Full-time result | Home Win, Draw, Away Win |
+| **Over/Under Goals** | Total goals in match | Over 2.5, Under 2.5 |
+| **Both Teams to Score** | Will both teams score? | Yes, No |
+| **Double Chance** | Cover two outcomes | Home/Draw, Draw/Away, Home/Away |
+
+#### Half-Time Markets
+
+| Market Type | Description |
+|-------------|-------------|
+| **First Half Result** | Result at half-time |
+| **First Half Over/Under** | Goals in first 45 minutes |
+
+#### Specialty Markets
+
+| Market Type | Description |
+|-------------|-------------|
+| **Corners Over/Under** | Total corner kicks |
+| **Corners First Half** | Corners in first half |
+| **Yellow Cards Over/Under** | Total bookings |
+| **Goal Scorer** | Player to score anytime |
+| **Correct Score** | Exact final score |
+
+**Market Type IDs:**
+- `SOCCER_MATCH_RESULT`
+- `SOCCER_UNDER_OVER`
+- `SOCCER_BOTH_TEAMS_TO_SCORE`
+- `SOCCER_DOUBLE_CHANCE`
+- `SOCCER_FIRST_HALF_RESULT`
+- `SOCCER_FIRST_HALF_UNDER_OVER`
+- `SOCCER_CORNERS_UNDER_OVER`
+- `SOCCER_CORNERS_FIRST_HALF_UNDER_OVER`
+- `SOCCER_YELLOW_CARDS_UNDER_OVER`
+
+### Basketball Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Moneyline** | Winner of the game | Lakers, Celtics |
+| **Spread** | Point differential | Lakers -5.5, Celtics +5.5 |
+| **Over/Under Points** | Total points scored | Over 220.5, Under 220.5 |
+| **First Half Winner** | Leader at halftime | Lakers, Celtics |
+| **Quarter Winner** | Winner of specific quarter | Lakers Q1, Celtics Q1 |
+
+### Baseball Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Moneyline** | Winner of the game | Yankees, Red Sox |
+| **Run Line** | Spread (typically ±1.5) | Yankees -1.5, Red Sox +1.5 |
+| **Over/Under Runs** | Total runs scored | Over 8.5, Under 8.5 |
+| **First 5 Innings** | Result after 5 innings | Yankees, Red Sox, Over/Under |
+
+### American Football Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Moneyline** | Winner of the game | Chiefs, Bills |
+| **Spread** | Point differential | Chiefs -3.5, Bills +3.5 |
+| **Over/Under Points** | Total points scored | Over 47.5, Under 47.5 |
+| **First Half Winner** | Leader at halftime | Chiefs, Bills |
+
+### Tennis Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Match Winner** | Winner of the match | Djokovic, Federer |
+| **Set Winner** | Winner of specific set | Djokovic Set 1, Federer Set 1 |
+| **Total Games** | Total games in match | Over 22.5, Under 22.5 |
+| **Handicap Sets** | Set handicap | Djokovic -1.5 sets |
+
+## Regional Coverage
+
+The API provides global sports coverage with a focus on major markets:
+
+<AccordionGroup>
+  <Accordion title="Europe" icon="earth-europe">
+    **Regions Covered:**
+    - England (Premier League, Championship, FA Cup)
+    - Spain (La Liga, Copa del Rey)
+    - Italy (Serie A, Coppa Italia)
+    - Germany (Bundesliga, DFB-Pokal)
+    - France (Ligue 1, Coupe de France)
+    - Portugal (Primeira Liga)
+    - Netherlands (Eredivisie)
+    - Belgium (Pro League)
+    - Scotland (Premiership)
+    - Turkey (Süper Lig)
+
+    **Coverage**: 100+ competitions across European soccer, basketball, handball, volleyball
+  </Accordion>
+
+  <Accordion title="Americas" icon="earth-americas">
+    **Regions Covered:**
+    - United States (NFL, NBA, MLB, MLS, NHL, NCAA)
+    - Brazil (Brasileirão, Copa do Brasil)
+    - Argentina (Liga Profesional)
+    - Mexico (Liga MX)
+    - Colombia (Primera A)
+    - Uruguay (Primera División)
+
+    **Coverage**: Major leagues plus international tournaments (Copa Libertadores, Copa Sudamericana)
+  </Accordion>
+
+  <Accordion title="Asia & Oceania" icon="earth-asia">
+    **Regions Covered:**
+    - Japan (J-League, NPB)
+    - South Korea (K-League, KBO)
+    - Australia (A-League, AFL)
+    - China (Super League)
+
+    **Coverage**: Domestic leagues and AFC competitions
+  </Accordion>
+
+  <Accordion title="International" icon="globe">
+    **Competitions Covered:**
+    - FIFA World Cup & Qualifiers
+    - UEFA Champions League
+    - UEFA Europa League
+    - Copa América
+    - AFC Asian Cup
+    - Africa Cup of Nations
+    - Olympic Games
+    - FIBA World Cup
+    - Rugby World Cup
+
+    **Coverage**: All major international tournaments across sports
+  </Accordion>
+</AccordionGroup>
+
+## Data Freshness
+
+<Info>
+  Odds and event data are updated every **30 seconds** for upcoming events and **every 10 seconds** for live events.
+</Info>
+
+**Update Frequencies:**
+- **Upcoming events**: 30-second intervals
+- **Live events**: 10-second intervals
+- **Event status changes**: Real-time (< 5 seconds)
+- **Results**: Within 2 minutes of event completion
+
+## Coverage Limitations
+
+<Warning>
+  While we strive for comprehensive coverage, some limitations apply:
+</Warning>
+
+**Not Currently Supported:**
+- Lower-tier leagues (Tier 4+ in most countries)
+- Amateur and youth competitions
+- Some regional markets in developing countries
+- Esports (coming soon)
+- Virtual sports
+
+**Market Availability:**
+- Not all markets available for all events
+- Market availability varies by event and sport
+- Some specialty markets only available closer to event time
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Data Model" icon="diagram-project" href="/concepts/data-model">
+    Understand the API data structure
+  </Card>
+
+  <Card title="Getting Odds" icon="list" href="/guides/getting-odds">
+    Learn how to fetch events and odds
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/odds/events">
+    Explore events endpoint
+  </Card>
+
+  <Card title="Filtering" icon="filter" href="/guides/filtering">
+    Filter by sport, league, or date
+  </Card>
+</CardGroup>

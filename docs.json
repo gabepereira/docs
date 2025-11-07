@@ -1,68 +1,99 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "theme": "aspen",
+  "name": "Mr. Doge API",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#F59E0B",
+    "light": "#FCD34D",
+    "dark": "#D97706"
   },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Getting Started",
+            "pages": ["index", "quickstart", "authentication"]
+          },
+          {
+            "group": "Credits System",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "credits/overview",
+              "credits/pricing"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Core Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "concepts/data-model",
+              "concepts/sports-coverage",
+              "concepts/ai-explained",
+              "concepts/bet-settlement"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Guides",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "guides/getting-odds",
+              "guides/ai-predictions",
+              "guides/live-data",
+              "guides/filtering",
+              "guides/error-handling"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Odds Endpoints",
             "pages": [
-              "api-reference/introduction"
+              "api-reference/odds/health",
+              "api-reference/odds/regions",
+              "api-reference/odds/competitions",
+              "api-reference/odds/events",
+              "api-reference/odds/event-details",
+              "api-reference/odds/live-events",
+              "api-reference/odds/trending-events",
+              "api-reference/odds/teams",
+              "api-reference/odds/stats"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "AI Endpoints",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/ai/mr-doge-picks",
+              "api-reference/ai/betting-recommendations",
+              "api-reference/ai/value-opportunities",
+              "api-reference/ai/processed-insights",
+              "api-reference/ai/performance"
+            ]
+          },
+          {
+            "group": "Live Data",
+            "pages": [
+              "api-reference/live/live-odds",
+              "api-reference/live/odds-history",
+              "api-reference/live/odds-movement"
+            ]
+          },
+          {
+            "group": "Bet Settlement",
+            "pages": [
+              "api-reference/settlement/event-status",
+              "api-reference/settlement/settle-bet",
+              "api-reference/settlement/event-result"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "api-reference/auth/api-keys",
+              "api-reference/auth/usage",
+              "api-reference/auth/tiers"
             ]
           }
         ]
@@ -71,14 +102,19 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Dashboard",
+          "href": "https://mrdoge.co/dashboard",
+          "icon": "chart-line"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "API Status",
+          "href": "https://status.mrdoge.co",
+          "icon": "signal-bars"
+        },
+        {
+          "anchor": "Community",
+          "href": "https://www.reddit.com/r/mrdoge/",
+          "icon": "reddit"
         }
       ]
     }
@@ -91,32 +127,33 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@mrdoge.co"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "label": "Get API Key",
+      "href": "https://mrdoge.co/dashboard"
     }
   },
   "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+    "options": ["copy", "view", "chatgpt", "claude", "cursor"]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/mrdogeapp"
     }
+  },
+  "api": {
+    "baseUrl": "https://api.mrdoge.co",
+    "auth": {
+      "method": "bearer"
+    },
+    "playground": {
+      "mode": "simple"
+    }
+  },
+  "search": {
+    "prompt": "Search Mr. Doge API docs..."
   }
 }

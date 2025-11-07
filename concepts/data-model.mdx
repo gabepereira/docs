@@ -1,0 +1,991 @@
+---
+title: "Data Model"
+description: "Understanding the Mr. Doge API data structure and entity relationships"
+---
+
+## Overview
+
+The Mr. Doge API is built around a hierarchical data model that represents sports betting data. Understanding this structure is crucial for effectively using the API.
+
+## Core Hierarchy
+
+The data follows a top-down hierarchy:
+
+```
+Sport
+  └─ Region (e.g., England, Spain, Brazil)
+      └─ Competition (e.g., Premier League, La Liga)
+          └─ Event (e.g., Arsenal vs Chelsea)
+              └─ Market (e.g., Match Result, Over/Under)
+                  └─ BetItem (e.g., Home Win, Draw, Away Win)
+```
+
+<Info>
+  This hierarchical structure allows you to filter and query data at any level - from all sports down to specific betting options.
+</Info>
+
+## Entities
+
+### Sport
+
+Represents a sport category supported by the API.
+
+**Supported Sports:**
+- Soccer (Football)
+- Basketball
+- Baseball
+- American Football
+- Handball
+- Tennis
+- Volleyball
+- Ice Hockey
+
+**Example:**
+```json
+{
+  "id": "1",
+  "name": "soccer",
+}
+```
+
+### Region
+
+Geographic areas where competitions take place.
+
+**Fields:**
+- `id` - Unique identifier
+- `name` - Region name (e.g., "England", "Spain")
+- `slug` - URL-friendly identifier
+- `sportId` - Parent sport
+- `captions` - Multilingual translations (en, pt, es)
+
+**Example:**
+```json
+{
+  "id": "6",
+  "caption": "England"
+}
+```
+
+### Competition
+
+Leagues, tournaments, or championships.
+
+**Fields:**
+- `id` - Unique identifier
+- `name` - Competition name (e.g., "Premier League")
+- `slug` - URL-friendly identifier
+- `regionId` - Parent region
+- `sportId` - Parent sport
+- `captions` - Multilingual translations
+
+**Example:**
+```json
+{
+  "id": "847",
+  "name": "Premier League",
+  "regionId": "6",
+  "sportId": "1"
+}
+```
+
+### Team
+
+Sports teams with associated metadata.
+
+**Fields:**
+- `id` - Unique identifier (integer)
+- `name` - Team name
+- `sportId` - Sport association (integer)
+- `imageId` - Image identifier (optional)
+
+**Example:**
+```json
+{
+  "id": 95450,
+  "name": "Arsenal",
+  "sportId": 1,
+}
+```
+
+### Event
+
+Individual matches or games across all sports.
+
+**Core Fields:**
+- `id` - Unique identifier (string)
+- `competitionId` - Parent competition (integer)
+- `regionId` - Parent region (integer)
+- `sportId` - Parent sport (integer, optional)
+- `startDateTime` - When the event starts (ISO 8601)
+- `status` - Event status: `upcoming`, `live`, or `completed` (default: "upcoming")
+- `views` - Number of times event was viewed (default: 0)
+- `metadata` - **Complete event data including teams, markets, and odds (JSON)**
+
+<Note>
+  **Deprecated Fields**: `homeTeamId`, `awayTeamId`, and other sport-specific columns are being phased out. All event-specific data is now contained in the `metadata` JSON field for consistency across all sports.
+</Note>
+
+**Event Statuses:**
+- `upcoming` - Event hasn't started yet
+- `live` - Event is currently in progress
+- `completed` - Event has finished
+
+**Metadata Structure:**
+
+The `metadata` field contains the complete event information including teams, competition details, and all available markets with odds. The structure varies slightly by sport but follows a consistent pattern.
+
+<AccordionGroup>
+  <Accordion title="Soccer Event Metadata" icon="futbol">
+    ```json
+    {
+      "id": "42735719",
+      "sportName": "soccer",
+      "sportSysname": "SOCCER_MATCH",
+      "regionId": 6,
+      "regionCaption": "Inglaterra",
+      "regionImageId": 92616,
+      "competitionId": 1536,
+      "competitionCaption": "EFL Cup",
+      "homeTeamName": "Arsenal",
+      "homeTeamImageId": 95450,
+      "awayTeamName": "Brighton",
+      "awayTeamImageId": 197280,
+      "startDateTime": "2025-10-29T19:45:00+00:00",
+      "markets": [
+        {
+          "marketId": 1488692956,
+          "betTypeSysname": "SOCCER_MATCH_RESULT",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6170635657",
+              "code": "1",
+              "caption": "1",
+              "codeCaption": null,
+              "instanceCaption": null,
+              "betDisplayCaption": null,
+              "price": 1.78,
+              "oddsText": "1.78",
+              "isAvailable": true,
+              "marketStatistic": null
+            },
+            {
+              "id": "6170635658",
+              "code": "X",
+              "caption": "X",
+              "price": 3.8,
+              "oddsText": "3.80",
+              "isAvailable": true
+            },
+            {
+              "id": "6170635659",
+              "code": "2",
+              "caption": "2",
+              "price": 5,
+              "oddsText": "5.00",
+              "isAvailable": true
+            }
+          ]
+        },
+        {
+          "marketId": 1467305214,
+          "betTypeSysname": "SOCCER_UNDER_OVER",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6084771517",
+              "code": "O",
+              "caption": "Mais de 2,5",
+              "codeCaption": "+",
+              "instanceCaption": "2,5",
+              "price": 1.72,
+              "oddsText": "1.72",
+              "isAvailable": true
+            },
+            {
+              "id": "6084771518",
+              "code": "U",
+              "caption": "Menos de 2,5",
+              "codeCaption": "-",
+              "instanceCaption": "2,5",
+              "price": 2.1,
+              "oddsText": "2.10",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Basketball Event Metadata" icon="basketball">
+    ```json
+    {
+      "id": "43148030",
+      "sportName": "basketball",
+      "sportSysname": "BASKETBALL_GAME",
+      "regionId": 1236,
+      "regionCaption": "NCAA",
+      "regionImageId": 151058,
+      "competitionId": 33405,
+      "competitionCaption": "NCAA",
+      "homeTeamName": "Florida State",
+      "homeTeamImageId": 75982,
+      "awayTeamName": "Alabama State",
+      "awayTeamImageId": 103840,
+      "startDateTime": "2025-11-08T00:00:00.0857937+00:00",
+      "markets": [
+        {
+          "marketId": 1499090451,
+          "betTypeSysname": "BASKETBALL_MATCH_RESULT_NODRAW",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6211223812",
+              "code": "1",
+              "caption": "1",
+              "price": 1.01,
+              "oddsText": "1.01",
+              "isAvailable": true
+            },
+            {
+              "id": "6211223813",
+              "code": "2",
+              "caption": "2",
+              "price": 16,
+              "oddsText": "16.00",
+              "isAvailable": true
+            }
+          ]
+        },
+        {
+          "marketId": 1499155085,
+          "betTypeSysname": "BASKETBALL_MATCH_RESULT_HANDICAP",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6211466532",
+              "code": "1",
+              "caption": "Florida State -24,5",
+              "instanceCaption": "-24,5",
+              "price": 1.85,
+              "oddsText": "1.85",
+              "isAvailable": true
+            },
+            {
+              "id": "6211466533",
+              "code": "2",
+              "caption": "Alabama State +24,5",
+              "instanceCaption": "+24,5",
+              "price": 1.92,
+              "oddsText": "1.92",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Tennis Event Metadata" icon="table-tennis-paddle-ball">
+    ```json
+    {
+      "id": "43264270",
+      "sportName": "tennis",
+      "sportSysname": "TENNIS_SINGLES_MATCH",
+      "regionId": 1188,
+      "regionCaption": "ITF (F)",
+      "regionImageId": 143348,
+      "competitionId": 35414,
+      "competitionCaption": "EUA - Lincoln (F)",
+      "homeTeamName": "Edda Mamedova",
+      "homeTeamImageId": 171992,
+      "awayTeamName": "Sonja Zhiyenbayeva",
+      "awayTeamImageId": 140196,
+      "startDateTime": "2025-11-07T18:00:00.0795739+00:00",
+      "markets": [
+        {
+          "marketId": 1499183287,
+          "betTypeSysname": "TENNIS_SINGLES_MATCH_WINNER",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6211587059",
+              "code": "1",
+              "caption": "1",
+              "price": 2,
+              "oddsText": "2.00",
+              "isAvailable": true
+            },
+            {
+              "id": "6211587060",
+              "code": "2",
+              "caption": "2",
+              "price": 1.7,
+              "oddsText": "1.70",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Baseball Event Metadata" icon="baseball">
+    ```json
+    {
+      "id": "43255333",
+      "sportName": "baseball",
+      "sportSysname": "BASEBALL_GAME",
+      "regionId": 110,
+      "regionCaption": "México",
+      "regionImageId": 80727,
+      "competitionId": 14555,
+      "competitionCaption": "Liga Mexicana del Pacifico",
+      "homeTeamName": "Yaquis de Obregon",
+      "homeTeamImageId": 0,
+      "awayTeamName": "Charros De Jalisco",
+      "awayTeamImageId": 0,
+      "startDateTime": "2025-11-07T02:10:00.0876385+00:00",
+      "markets": [
+        {
+          "marketId": 1498660642,
+          "betTypeSysname": "BASEBALL_MATCH_RESULT_NODRAW",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6209348293",
+              "code": "1",
+              "caption": "1",
+              "price": 1.7,
+              "oddsText": "1.70",
+              "isAvailable": true
+            },
+            {
+              "id": "6209348294",
+              "code": "2",
+              "caption": "2",
+              "price": 2,
+              "oddsText": "2.00",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Volleyball Event Metadata" icon="volleyball">
+    ```json
+    {
+      "id": "43070622",
+      "sportName": "volleyball",
+      "sportSysname": "VOLLEYBALL_GAME",
+      "regionId": 92,
+      "regionCaption": "Uruguai",
+      "regionImageId": 80767,
+      "competitionId": 13690,
+      "competitionCaption": "Primera (F)",
+      "homeTeamName": "CBR B (F)",
+      "homeTeamImageId": 0,
+      "awayTeamName": "Club Nacional de Football (F)",
+      "awayTeamImageId": 0,
+      "startDateTime": "2025-11-08T03:00:00.0912071+00:00",
+      "markets": [
+        {
+          "marketId": 1494776598,
+          "betTypeSysname": "VOLLEYBALL_MATCH_RESULT",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6194250889",
+              "code": "1",
+              "caption": "1",
+              "price": 1.08,
+              "oddsText": "1.08",
+              "isAvailable": true
+            },
+            {
+              "id": "6194250890",
+              "code": "2",
+              "caption": "2",
+              "price": 6.5,
+              "oddsText": "6.50",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="American Football Event Metadata" icon="football">
+    ```json
+    {
+      "id": "43232462",
+      "sportName": "american-football",
+      "sportSysname": "AMERICAN_FOOTBALL_GAME",
+      "regionId": 55,
+      "regionCaption": "EUA",
+      "regionImageId": 80529,
+      "competitionId": 9182,
+      "competitionCaption": "NCAAF",
+      "homeTeamName": "Columbia Lions",
+      "homeTeamImageId": 0,
+      "awayTeamName": "Harvard",
+      "awayTeamImageId": 0,
+      "startDateTime": "2025-11-08T00:00:00.0987816+00:00",
+      "markets": [
+        {
+          "marketId": 1497290690,
+          "betTypeSysname": "AMERICAN_FOOTBALL_MATCH_RESULT_NO_DRAW",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6204104513",
+              "code": "1",
+              "caption": "1",
+              "price": 20,
+              "oddsText": "20.00",
+              "isAvailable": true
+            },
+            {
+              "id": "6204104514",
+              "code": "2",
+              "caption": "2",
+              "price": 1.01,
+              "oddsText": "1.01",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Ice Hockey Event Metadata" icon="hockey-puck">
+    ```json
+    {
+      "id": "43254114",
+      "sportName": "ice-hockey",
+      "sportSysname": "ICE_HOCKEY_GAME",
+      "regionId": 2,
+      "regionCaption": "Europa",
+      "regionImageId": 88131,
+      "competitionId": 38045,
+      "competitionCaption": "European Cup of Nations",
+      "homeTeamName": "Grã-Bretanha",
+      "homeTeamImageId": 141809,
+      "awayTeamName": "Itália",
+      "awayTeamImageId": 131702,
+      "startDateTime": "2025-11-07T15:00:00.1014439+00:00",
+      "markets": [
+        {
+          "marketId": 1499181302,
+          "betTypeSysname": "ICE_HOCKEY_MATCH_WINNER",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6211576489",
+              "code": "1",
+              "caption": "1",
+              "price": 3.5,
+              "oddsText": "3.50",
+              "isAvailable": true
+            },
+            {
+              "id": "6211576490",
+              "code": "2",
+              "caption": "2",
+              "price": 1.26,
+              "oddsText": "1.26",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Handball Event Metadata" icon="hand-fist">
+    ```json
+    {
+      "id": "43211395",
+      "sportName": "handball",
+      "sportSysname": "HANDBALL_GAME",
+      "regionId": 27,
+      "regionCaption": "Dinamarca",
+      "regionImageId": 80545,
+      "competitionId": 1563,
+      "competitionCaption": "Kvindeligaen (F)",
+      "homeTeamName": "Hoej Elite (F)",
+      "homeTeamImageId": 136548,
+      "awayTeamName": "Nykobing Handboldklub (F)",
+      "awayTeamImageId": 136276,
+      "startDateTime": "2025-11-07T18:30:00.099058+00:00",
+      "markets": [
+        {
+          "marketId": 1496603666,
+          "betTypeSysname": "HANDBALL_MATCH_RESULT",
+          "useInstanceCaption": false,
+          "betItems": [
+            {
+              "id": "6201603267",
+              "code": "1",
+              "caption": "1",
+              "price": 8,
+              "oddsText": "8.00",
+              "isAvailable": true
+            },
+            {
+              "id": "6201603268",
+              "code": "X",
+              "caption": "X",
+              "price": 12,
+              "oddsText": "12.00",
+              "isAvailable": true
+            },
+            {
+              "id": "6201603269",
+              "code": "2",
+              "caption": "2",
+              "price": 1.1,
+              "oddsText": "1.10",
+              "isAvailable": true
+            }
+          ]
+        }
+      ]
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+**Key Metadata Fields (Common Across All Sports):**
+- `sportName` - Sport identifier (e.g., "soccer", "basketball")
+- `sportSysname` - System name for the sport type
+- `homeTeamName` / `awayTeamName` - Team names
+- `homeTeamImageId` / `awayTeamImageId` - Team logo identifiers
+- `regionCaption` - Human-readable region name
+- `competitionCaption` - Human-readable competition name
+- `markets` - Array of available betting markets with odds
+- `betItems` - Individual betting options within each market
+
+<Tip>
+  **Why Metadata?** This unified structure allows the API to support all sports consistently. Instead of having sport-specific columns, all event details are contained in a flexible JSON structure.
+</Tip>
+
+### Market
+
+Betting markets available for an event.
+
+**Common Market Types:**
+- `SOCCER_MATCH_RESULT` - Full time result (1/X/2)
+- `SOCCER_UNDER_OVER` - Goals over/under
+- `SOCCER_DOUBLE_CHANCE` - Combine two outcomes
+- `SOCCER_BOTH_TEAMS_TO_SCORE` - Yes/No
+- `BASKETBALL_MONEYLINE` - Winner
+- `BASKETBALL_SPREAD` - Point spread
+
+**Fields:**
+- `id` - Unique identifier (string)
+- `eventId` - Parent event (string)
+- `betTypeSysname` - Market type system name (string)
+
+**Example:**
+```json
+{
+  "id": "mkt_123",
+  "eventId": "evt_abc123",
+  "betTypeSysname": "SOCCER_MATCH_RESULT",
+}
+```
+
+### BetItem
+
+Individual betting options within a market.
+
+**Fields:**
+- `id` - Unique identifier (string)
+- `marketId` - Parent market (string)
+- `code` - Bet code (string)
+- `codeCaption` - Code caption (string, optional)
+- `caption` - Display caption (string)
+- `instanceCaption` - Instance-specific caption (string, optional)
+- `betDisplayCaption` - Formatted display caption (string, optional)
+- `price` - Decimal odds (float, e.g., 2.10)
+- `oddsText` - Display text for odds (string, e.g., "2.10")
+- `isAvailable` - Whether this bet can be placed (boolean, default: true)
+- `lastUpdated` - When odds were last updated (DateTime)
+
+**Example:**
+```json
+{
+  "id": "bet_001",
+  "marketId": "mkt_123",
+  "code": "1",
+  "caption": "Arsenal",
+  "price": 2.10,
+  "oddsText": "2.10",
+  "isAvailable": true,
+  "lastUpdated": "2025-11-07T14:30:00Z"
+}
+```
+
+<Tip>
+  **Decimal Odds Explained**: A price of 2.10 means for every $1 wagered, you receive $2.10 back if you win (including your stake). So a $100 bet returns $210 ($110 profit + $100 stake).
+</Tip>
+
+## Live Event Data
+
+For live (in-progress) events, additional real-time data is available.
+
+### LiveEventData
+
+Real-time match statistics updated during the event.
+
+**Core Fields:**
+- `id` - Unique identifier (string)
+- `eventId` - Parent event (string)
+- `betContextId` - Bet context identifier (string)
+- `liveDataJson` - **Sport-specific live data including scores, stats, and match phase (JSON)**
+- `fetchedAt` - When data was fetched (DateTime)
+- `lastUpdated` - Last update timestamp (DateTime)
+
+<Note>
+  **Sport-Specific Structure**: The `liveDataJson` field contains different data structures for each sport. Soccer includes goals/corners/cards, basketball has quarter scores, tennis tracks sets/games, and baseball shows innings/outs/bases.
+</Note>
+
+**Common Fields in liveDataJson:**
+- `isLive` - Whether event is currently live
+- `isInPlay` - Whether in-play betting is available
+- `phaseSysname` - Match phase (e.g., "SOCCER_MATCH_SECOND_HALF", "72'", "FT")
+- `discriminator` - Sport type discriminator (e.g., "SoccerMatchLiveDataModel")
+
+**Soccer Example:**
+```json
+{
+  "id": "live_001",
+  "eventId": "evt_abc123",
+  "betContextId": "ctx_123",
+  "liveDataJson": {
+    "discriminator": "SoccerMatchLiveDataModel",
+    "eventSysname": "SOCCER_MATCH",
+    "isLive": true,
+    "isInPlay": true,
+    "homeGoals": 2,
+    "awayGoals": 1,
+    "homeCorners": 5,
+    "awayCorners": 3,
+    "homeYellowCards": 2,
+    "awayYellowCards": 1,
+    "homeRedCards": 0,
+    "awayRedCards": 0,
+    "phaseSysname": "SOCCER_MATCH_SECOND_HALF",
+    "elapsedSeconds": 4320,
+    "referenceTime": "2025-11-08T16:12:30Z",
+    "referenceTimeUnix": 1762443150
+  },
+  "fetchedAt": "2025-11-08T16:12:30Z",
+  "lastUpdated": "2025-11-08T16:12:30Z"
+}
+```
+
+**Basketball Example:**
+```json
+{
+  "liveDataJson": {
+    "discriminator": "BasketballGameLiveDataModel",
+    "eventSysname": "BASKETBALL_GAME",
+    "isLive": true,
+    "isInPlay": false,
+    "homePoints": 89,
+    "awayPoints": 77,
+    "quarterScores": [
+      {"caption": "1º P", "sysname": "Q1", "homeScore": 19, "awayScore": 29},
+      {"caption": "2º P", "sysname": "Q2", "homeScore": 28, "awayScore": 24},
+      {"caption": "3º P", "sysname": "Q3", "homeScore": 17, "awayScore": 16},
+      {"caption": "4º P", "sysname": "Q4", "homeScore": 25, "awayScore": 8}
+    ],
+    "homeFouls": 5,
+    "awayFouls": 9
+  }
+}
+```
+
+**Tennis Example:**
+```json
+{
+  "liveDataJson": {
+    "discriminator": "TennisSinglesMatchLiveDataModel",
+    "eventSysname": "TENNIS_SINGLES_MATCH",
+    "isLive": true,
+    "isInPlay": true,
+    "player1Sets": 0,
+    "player2Sets": 1,
+    "setScores": [
+      {"caption": "1º Set", "player1Score": 3, "player2Score": 6, "player2Winner": true},
+      {"caption": "2º set", "player1Score": 0, "player2Score": 5, "inPlay": true}
+    ],
+    "player1GamePointsText": "30",
+    "player2GamePointsText": "40",
+    "player1Serves": true,
+  }
+}
+```
+
+**Baseball Example:**
+```json
+{
+  "liveDataJson": {
+    "discriminator": "BaseballGameLiveDataModel",
+    "eventSysname": "BASEBALL_GAME",
+    "isLive": true,
+    "isInPlay": true,
+    "homeRuns": 3,
+    "awayRuns": 7,
+    "outs": 1,
+    "balls": 1,
+    "strikes": 0,
+    "bases": [false, false, false],
+    "inningScores": [
+      {"caption": "1º Inning", "homeScore": 0, "awayScore": 0},
+      {"caption": "2º Inning", "homeScore": 2, "awayScore": 0}
+    ]
+  }
+}
+```
+
+<Tip>
+  **Need Examples?** Contact support@mrdoge.co for TypeScript interfaces and frontend integration examples for all sports.
+</Tip>
+
+### LiveBetItem
+
+Snapshots of odds changes during live events.
+
+**Purpose**: Track how odds move in real-time as the match progresses.
+
+**Fields:**
+- `id` - Unique identifier (string)
+- `liveEventDataId` - Parent live event data (string)
+- `betItemId` - Reference to the bet option (string)
+- `marketId` - Market identifier (string)
+- `marketSysname` - Market system name (string)
+- `marketCaption` - Market display caption (string)
+- `marketData` - Market data (JSON)
+- `code` - Bet code (string)
+- `caption` - Display caption (string)
+- `price` - Decimal odds at this snapshot (float)
+- `oddsText` - Display text for odds (string)
+- `isAvailable` - Whether bet is available (boolean, default: true)
+- `priceChange` - Price change from previous snapshot (float, optional)
+- `timestamp` - When snapshot was taken (string)
+- `capturedAt` - Capture timestamp (DateTime)
+
+**Example:**
+```json
+{
+  "id": "live_bet_001",
+  "liveEventDataId": "live_001",
+  "betItemId": "bet_001",
+  "marketId": "mkt_123",
+  "marketSysname": "SOCCER_MATCH_RESULT",
+  "marketCaption": "Match Result",
+  "code": "1",
+  "caption": "Arsenal",
+  "price": 1.95,
+  "oddsText": "1.95",
+  "isAvailable": true,
+  "priceChange": -0.15,
+  "timestamp": "72:30",
+  "capturedAt": "2025-11-08T16:12:30Z"
+}
+```
+
+This allows you to see odds movement history and identify betting opportunities based on market reactions.
+
+## AI Prediction Entities
+
+The API provides AI-generated predictions and analysis.
+
+### BettingRecommendation
+
+AI-generated betting picks with confidence scoring.
+
+**Fields:**
+- `id` - Unique identifier (string)
+- `eventId` - Parent event (string)
+- `marketId` - Market identifier (string)
+- `betItemId` - Bet item identifier (string, optional)
+- `analysisTimestamp` - When analysis was performed (DateTime)
+- `outcome` - Predicted result (string)
+- `odds` - Decimal odds for the pick (float)
+- `point` - Point value for spreads/totals (float, optional)
+- `confidence` - Risk level: `Low`, `Medium`, or `High` (string)
+- `edgePercentage` - Expected value edge (float, e.g., 6.8 means 6.8%)
+- `kellyFraction` - Suggested stake size using Kelly Criterion (float)
+- `rationale` - Why the AI recommends this bet (string array)
+- `riskFactors` - Potential risks to consider (string array)
+- `settled` - Whether bet has been settled (boolean, default: false)
+- `result` - Settlement result: `won`, `lost`, or `push` (ResultType enum, optional)
+- `settlementDate` - When bet was settled (DateTime, optional)
+- `actualReturn` - Actual return amount (float, optional)
+
+**Confidence Levels:**
+- `Low` - Edge < 3%
+- `Medium` - Edge 3-5%
+- `High` - Edge > 5%
+
+**Example:**
+```json
+{
+  "id": "rec_001",
+  "eventId": "evt_abc123",
+  "marketId": "mkt_123",
+  "betItemId": "bet_001",
+  "outcome": "Arsenal",
+  "odds": 2.10,
+  "confidence": "High",
+  "edgePercentage": 6.8,
+  "kellyFraction": 0.032,
+  "rationale": ["Arsenal's home form excellent", "Chelsea defensive issues"],
+  "riskFactors": ["Chelsea has key players returning from injury"],
+  "settled": false,
+}
+```
+
+### MrDogePick
+
+Featured AI recommendations (parlays or highlighted picks).
+
+**Fields:**
+- `id` - Unique identifier (string)
+- `eventId` - Parent event (string, unique)
+- `pickType` - Type of pick (string, default: "single")
+- `recommendations` - Array of recommendations (JSON)
+- `totalOdds` - Combined odds for parlay (float)
+- `featuredOrder` - Display order, lower = higher priority (integer, optional)
+- `isActive` - Whether pick is active (boolean, default: true)
+- `expiresAt` - When this pick expires (DateTime)
+- `settled` - Whether bet has been settled (boolean, default: false)
+- `result` - Settlement result: `won`, `lost`, or `push` (ResultType enum, optional)
+- `settlementDate` - When bet was settled (DateTime, optional)
+- `actualReturn` - Actual return amount (float, optional)
+- `createdAt` - Creation timestamp (DateTime)
+
+**Example:**
+```json
+{
+  "id": "pick_001",
+  "eventId": "evt_abc123",
+  "pickType": "parlay",
+  "recommendations": [
+    {"eventId": "evt_abc123", "outcome": "Arsenal", "odds": 2.10},
+    {"eventId": "evt_def456", "outcome": "Over 2.5", "odds": 1.85}
+  ],
+  "totalOdds": 3.89,
+  "featuredOrder": 1,
+  "isActive": true,
+  "expiresAt": "2025-11-08T15:00:00Z",
+  "settled": false
+}
+```
+
+### ProcessedInsight
+
+Market analysis and value opportunities.
+
+**Fields:**
+- `id` - Unique identifier (string)
+- `eventId` - Parent event (string, unique)
+- `analysisTimestamp` - When analysis was performed (DateTime)
+- `marketEfficiencyScore` - How efficiently priced the market is (float, 0-100)
+- `lineMovementData` - How odds have shifted (JSON, optional)
+- `valueOpportunities` - Identified +EV bets (JSON, optional)
+- `riskAssessment` - Overall risk analysis (JSON, optional)
+- `aiAnalysisNotes` - Additional AI analysis notes (string, optional)
+- `createdAt` - Creation timestamp (DateTime)
+- `updatedAt` - Last update timestamp (DateTime)
+
+**Example:**
+```json
+{
+  "id": "insight_001",
+  "eventId": "evt_abc123",
+  "marketEfficiencyScore": 87.5,
+  "valueOpportunities": [
+    {
+      "market": "Match Result",
+      "outcome": "Arsenal",
+      "currentOdds": 2.10,
+      "fairOdds": 1.95,
+      "edge": 7.7
+    }
+  ],
+  "riskAssessment": {
+    "variance": "Medium",
+    "liquidity": "High",
+    "sharpMoney": "Backing Arsenal"
+  },
+  "aiAnalysisNotes": "Strong home form suggests value in Arsenal backing"
+}
+```
+
+## Key Concepts
+
+### Event Status Lifecycle
+
+```
+upcoming → live → completed
+```
+
+- **upcoming**: Event hasn't started, bets can be placed
+- **live**: Event in progress, in-play betting available
+- **completed**: Event finished, bets are settled
+
+### Odds Format
+
+The API uses **decimal odds** (also called European odds):
+
+- `2.00` = Even money (100% profit)
+- `1.50` = -200 American odds (50% profit)
+- `3.00` = +200 American odds (200% profit)
+
+**Formula**: `Potential Return = Stake × Odds`
+
+### Implied Probability
+
+Odds can be converted to probability:
+
+`Implied Probability = 1 / Decimal Odds`
+
+Example: Odds of 2.10 → `1 / 2.10 = 0.476` → 47.6% probability
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Sports Coverage" icon="futbol" href="/concepts/sports-coverage">
+    See all supported sports and market types
+  </Card>
+
+  <Card title="AI Explained" icon="brain" href="/concepts/ai-explained">
+    Learn how AI predictions work
+  </Card>
+
+  <Card title="Getting Odds" icon="list" href="/guides/getting-odds">
+    Start fetching events and odds
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/odds/events">
+    Explore all endpoints
+  </Card>
+</CardGroup>
