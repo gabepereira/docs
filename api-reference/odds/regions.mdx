@@ -1,0 +1,151 @@
+---
+title: "List Regions"
+api: "GET https://api.mrdoge.co/odds/regions"
+description: "Get all available regions (countries) with sports coverage, competition counts, and localized names"
+---
+
+<Info>
+  **Public Endpoint**: No API key required
+</Info>
+
+This endpoint returns all regions where Mr. Doge has sports coverage, including:
+- Localized region names (supports multiple languages)
+- Number of competitions per region
+- Number of upcoming events
+- Available sports in each region
+- List of competitions
+
+Perfect for building region selectors or filtering events by location.
+
+## Query Parameters
+
+<ParamField query="locale" type="string" default="en">
+  Language code for localized region names. Supported: `en`, `es`, `pt`, `fr`, `de`, `it`
+</ParamField>
+
+<ParamField query="date" type="string">
+  Filter regions with events on specific date (YYYY-MM-DD format)
+
+  Example: `2025-11-08`
+</ParamField>
+
+<ParamField query="startDate" type="string">
+  Filter regions with events starting from this date
+</ParamField>
+
+<ParamField query="endDate" type="string">
+  Filter regions with events ending on this date
+</ParamField>
+
+<ParamField query="timezone" type="string">
+  Timezone for date filtering
+
+  Example: `America/New_York`, `Europe/London`
+</ParamField>
+
+## Response
+
+Returns an object with a `data` array containing region objects.
+
+<ResponseField name="data" type="array">
+  <Expandable title="Region Object">
+    <ResponseField name="id" type="integer">
+      Region ID
+    </ResponseField>
+
+    <ResponseField name="caption" type="string">
+      Region name (localized based on `locale` parameter)
+    </ResponseField>
+
+    <ResponseField name="_count" type="object">
+      <Expandable title="Count Object">
+        <ResponseField name="competitions" type="integer">
+          Number of competitions in this region
+        </ResponseField>
+
+        <ResponseField name="events" type="integer">
+          Number of upcoming events in this region
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+
+    <ResponseField name="availableSports" type="array">
+      Array of sport names available in this region
+
+      Example: `["soccer", "basketball", "tennis"]`
+    </ResponseField>
+
+    <ResponseField name="competitions" type="array">
+      Array of competition objects with `id` and `caption`
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example Request
+
+```bash
+curl https://api.mrdoge.co/odds/regions?locale=en&date=2025-11-08
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "caption": "England",
+      "_count": {
+        "competitions": 5,
+        "events": 120
+      },
+      "availableSports": ["soccer", "tennis"],
+      "competitions": [
+        {
+          "id": 1,
+          "caption": "Premier League"
+        },
+        {
+          "id": 2,
+          "caption": "Championship"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "caption": "Spain",
+      "_count": {
+        "competitions": 3,
+        "events": 85
+      },
+      "availableSports": ["soccer", "basketball"],
+      "competitions": [
+        {
+          "id": 10,
+          "caption": "La Liga"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Region Selector" icon="globe">
+    Build a dropdown to let users filter events by country
+  </Card>
+
+  <Card title="Coverage Map" icon="map">
+    Display which regions have the most events and competitions
+  </Card>
+
+  <Card title="Localization" icon="language">
+    Show region names in user's preferred language
+  </Card>
+
+  <Card title="Sport Filtering" icon="filter">
+    Show which regions have specific sports available
+  </Card>
+</CardGroup>

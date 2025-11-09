@@ -1,0 +1,189 @@
+---
+title: "Get AI Performance Metrics"
+api: "GET https://api.mrdoge.co/ai/performance"
+auth: "bearer"
+description: "Get historical performance statistics for AI recommendations including win rates and ROI"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **1 credit** per request.
+</Warning>
+
+Returns comprehensive performance metrics for Mr. Doge's AI recommendations over a specified time period. Use this to verify AI accuracy and track performance by confidence level.
+
+All performance data is based on settled bets with actual outcomes.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="days" type="string" default="30">
+  Number of days to analyze
+
+  Example: `7` for last week, `30` for last month, `90` for last quarter
+</ParamField>
+
+## Response
+
+<ResponseField name="period" type="string">
+  Time period analyzed (e.g., "30 days")
+</ResponseField>
+
+<ResponseField name="recommendations" type="object">
+  Overall recommendation statistics
+
+  <Expandable title="Recommendation Stats">
+    <ResponseField name="total" type="integer">
+      Total recommendations made
+    </ResponseField>
+
+    <ResponseField name="wins" type="integer">
+      Number of winning bets
+    </ResponseField>
+
+    <ResponseField name="losses" type="integer">
+      Number of losing bets
+    </ResponseField>
+
+    <ResponseField name="pushes" type="integer">
+      Number of pushes/voids
+    </ResponseField>
+
+    <ResponseField name="winRate" type="string">
+      Win percentage (excludes pushes)
+
+      Example: `"63.3%"`
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="picks" type="object">
+  Mr. Doge Picks statistics (same structure as recommendations)
+</ResponseField>
+
+<ResponseField name="byConfidence" type="object">
+  Performance broken down by confidence level
+
+  <Expandable title="By Confidence">
+    <ResponseField name="High" type="object">
+      High confidence recommendations stats
+    </ResponseField>
+
+    <ResponseField name="Medium" type="object">
+      Medium confidence recommendations stats
+    </ResponseField>
+
+    <ResponseField name="Low" type="object">
+      Low confidence recommendations stats
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/ai/performance"
+```
+
+## Example Response
+
+```json
+{
+  "period": "30 days",
+  "overall": {
+    "totalBets": 19552,
+    "wins": 9836,
+    "winRate": "50.3%",
+    "roi": "-7.6%",
+    "profit": "-1493.79"
+  },
+  "byConfidence": [
+    {
+      "confidence": "High",
+      "total": 9491,
+      "wins": 4643,
+      "winRate": "48.9%",
+      "roi": "-11.8%",
+      "avgEdge": "12.8%"
+    },
+    {
+      "confidence": "Medium",
+      "total": 7650,
+      "wins": 3955,
+      "winRate": "51.7%",
+      "roi": "-3.2%",
+      "avgEdge": "7.0%"
+    },
+    {
+      "confidence": "Low",
+      "total": 2073,
+      "wins": 1059,
+      "winRate": "51.1%",
+      "roi": "-5.6%",
+      "avgEdge": "4.0%"
+    }
+  ],
+  "lastUpdated": "2025-11-09T11:44:27.533Z"
+}
+```
+
+## Understanding the Metrics
+
+<AccordionGroup>
+  <Accordion title="Win Rate" icon="percent">
+    **Formula**: `Wins / (Wins + Losses)`
+
+    **Note**: Pushes are excluded from win rate calculation since they're neither wins nor losses.
+
+    **Expected Ranges**:
+    - High Confidence: 60-65%
+    - Medium Confidence: 55-60%
+    - Low Confidence: 50-55%
+  </Accordion>
+
+  <Accordion title="Parlays vs Singles" icon="chart-line">
+    **Mr. Doge Picks** (which include parlays) typically have lower win rates than individual recommendations because all legs must win.
+
+    This is expected and doesn't indicate lower quality - parlays offer higher potential returns but lower win probability.
+  </Accordion>
+
+  <Accordion title="Sample Size" icon="hashtag">
+    Performance becomes more reliable with larger sample sizes:
+    - **< 50 bets**: Too small for reliable conclusions
+    - **50-200 bets**: Starting to be meaningful
+    - **200+ bets**: Statistically significant
+
+    We recommend analyzing at least 30 days (typically 200+ recommendations).
+  </Accordion>
+</AccordionGroup>
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Transparency" icon="eye">
+    Show users actual AI performance
+  </Card>
+
+  <Card title="Trust Building" icon="shield-check">
+    Demonstrate track record
+  </Card>
+
+  <Card title="Strategy Analysis" icon="chart-bar">
+    Evaluate confidence level performance
+  </Card>
+
+  <Card title="Reporting" icon="file-chart-column">
+    Generate performance reports
+  </Card>
+</CardGroup>
+
+## Related Endpoints
+
+<Card title="Performance by Day" icon="calendar" href="/api-reference/ai/processed-insights">
+  Get daily breakdown with cumulative P&L tracking
+</Card>

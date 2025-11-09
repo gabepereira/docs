@@ -138,6 +138,15 @@ Soccer (Football) has the most comprehensive market coverage:
 | **First Half Winner** | Leader at halftime | Lakers, Celtics |
 | **Quarter Winner** | Winner of specific quarter | Lakers Q1, Celtics Q1 |
 
+**Market Type IDs:**
+- `BASKETBALL_MATCH_RESULT_NODRAW`
+- `BASKETBALL_MATCH_RESULT_HANDICAP`
+- `BASKETBALL_UNDER_OVER`
+- `BASKETBALL_FIRST_HALF_UNDER_OVER`
+- `BASKETBALL_FIRST_HALF_RESULT_HANDICAP`
+
+---
+
 ### Baseball Markets
 
 | Market Type | Description | Example |
@@ -146,6 +155,13 @@ Soccer (Football) has the most comprehensive market coverage:
 | **Run Line** | Spread (typically ±1.5) | Yankees -1.5, Red Sox +1.5 |
 | **Over/Under Runs** | Total runs scored | Over 8.5, Under 8.5 |
 | **First 5 Innings** | Result after 5 innings | Yankees, Red Sox, Over/Under |
+
+**Market Type IDs:**
+- `BASEBALL_MATCH_RESULT_NODRAW`
+- `BASEBALL_MATCH_RESULT_ASIAN`
+- `BASEBALL_UNDER_OVER`
+
+---
 
 ### American Football Markets
 
@@ -156,6 +172,13 @@ Soccer (Football) has the most comprehensive market coverage:
 | **Over/Under Points** | Total points scored | Over 47.5, Under 47.5 |
 | **First Half Winner** | Leader at halftime | Chiefs, Bills |
 
+**Market Type IDs:**
+- `AMERICAN_FOOTBALL_MATCH_RESULT_NO_DRAW`
+- `AMERICAN_FOOTBALL_MATCH_RESULT_HANDICAP`
+- `AMERICAN_FOOTBALL_UNDER_OVER`
+
+---
+
 ### Tennis Markets
 
 | Market Type | Description | Example |
@@ -164,6 +187,69 @@ Soccer (Football) has the most comprehensive market coverage:
 | **Set Winner** | Winner of specific set | Djokovic Set 1, Federer Set 1 |
 | **Total Games** | Total games in match | Over 22.5, Under 22.5 |
 | **Handicap Sets** | Set handicap | Djokovic -1.5 sets |
+
+**Market Type IDs:**
+- `TENNIS_SINGLES_MATCH_WINNER`
+- `TENNIS_SINGLES_SET_1_WINNER`
+- `TENNIS_SINGLES_SET_2_WINNER`
+- `TENNIS_SINGLES_TOTAL_GAMES`
+
+---
+
+### Volleyball Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Match Winner** | Winner of the match | Team A, Team B |
+| **First Set Winner** | Winner of first set | Team A, Team B |
+| **Total Sets** | Total sets played | Over 3.5, Under 3.5 |
+| **Set Handicap** | Set differential | Team A -1.5 sets |
+
+**Market Type IDs:**
+- `VOLLEYBALL_MATCH_RESULT`
+- `VOLLEYBALL_FIRST_SET_RESULT`
+- `VOLLEYBALL_TOTAL_SETS`
+
+---
+
+### Ice Hockey Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Match Winner** | Winner (incl. OT/SO) | Bruins, Maple Leafs |
+| **Puck Line** | Spread (typically ±1.5) | Bruins -1.5, Leafs +1.5 |
+| **Over/Under Goals** | Total goals scored | Over 5.5, Under 5.5 |
+| **First Period Winner** | Leader after 1st period | Bruins, Leafs |
+| **First Period Over/Under** | Goals in 1st period | Over 1.5, Under 1.5 |
+
+**Market Type IDs:**
+- `ICE_HOCKEY_MATCH_WINNER`
+- `ICE_HOCKEY_MATCH_RESULT_ASIAN`
+- `ICE_HOCKEY_UNDER_OVER`
+- `ICE_HOCKEY_FIRST_PERIOD_WINNER`
+- `ICE_HOCKEY_FIRST_PERIOD_UNDER_OVER`
+- `ICE_HOCKEY_FIRST_PERIOD_RESULT_ASIAN`
+
+---
+
+### Handball Markets
+
+| Market Type | Description | Example |
+|-------------|-------------|---------|
+| **Match Result** | Full-time result (1X2) | Home, Draw, Away |
+| **Over/Under Goals** | Total goals in match | Over 50.5, Under 50.5 |
+| **First Half Result** | Result at halftime | Home, Draw, Away |
+| **First Half Handicap** | First half spread | Home -2.5, Away +2.5 |
+| **Handicap** | Goal differential | Home -5.5, Away +5.5 |
+
+**Market Type IDs:**
+- `HANDBALL_MATCH_RESULT`
+- `HANDBALL_UNDER_OVER`
+- `HANDBALL_FIRST_HALF_RESULT`
+- `HANDBALL_FIRST_HALF_RESULT_ASIAN`
+- `HANDBALL_MATCH_RESULT_ASIAN`
+
+---
 
 ## Regional Coverage
 

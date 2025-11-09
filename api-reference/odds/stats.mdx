@@ -1,0 +1,114 @@
+---
+title: "Get API Statistics"
+api: "GET https://api.mrdoge.co/odds/stats"
+auth: "bearer"
+description: "Get overall statistics about available data in the API"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **1 credit** per request.
+</Warning>
+
+Returns comprehensive statistics about all data available in the API, including event counts by status and data provider information. Useful for displaying coverage information or building statistics dashboards.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+## Response
+
+<ResponseField name="totalRegions" type="integer">
+  Total number of regions (countries) covered
+</ResponseField>
+
+<ResponseField name="totalCompetitions" type="integer">
+  Total number of competitions (leagues/tournaments)
+</ResponseField>
+
+<ResponseField name="totalEvents" type="integer">
+  Total number of events across all statuses
+</ResponseField>
+
+<ResponseField name="totalTeams" type="integer">
+  Total number of teams in the database
+</ResponseField>
+
+<ResponseField name="totalMarkets" type="integer">
+  Total number of betting markets available
+</ResponseField>
+
+<ResponseField name="upcomingEvents" type="integer">
+  Number of upcoming events (not yet started)
+</ResponseField>
+
+<ResponseField name="todayEvents" type="integer">
+  Number of events scheduled for today
+</ResponseField>
+
+<ResponseField name="liveEvents" type="integer">
+  Number of currently live events
+</ResponseField>
+
+<ResponseField name="bookmakers" type="array">
+  Array of data providers with their statistics
+
+  <Expandable title="Bookmaker Object">
+    <ResponseField name="id" type="string">
+      Data provider identifier
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      Data provider display name
+    </ResponseField>
+
+    <ResponseField name="eventsCount" type="integer">
+      Number of events from this provider
+    </ResponseField>
+
+    <ResponseField name="marketsCount" type="integer">
+      Number of markets from this provider
+    </ResponseField>
+
+    <ResponseField name="lastFetch" type="string">
+      ISO 8601 timestamp of last data update
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="lastUpdated" type="string">
+  ISO 8601 timestamp when these statistics were calculated
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  https://api.mrdoge.co/odds/stats
+```
+
+## Example Response
+
+```json
+{
+  "totalRegions": 175,
+  "totalCompetitions": 1353,
+  "totalEvents": 41494,
+  "totalTeams": 17699,
+  "totalMarkets": 253858,
+  "upcomingEvents": 4,
+  "todayEvents": 1337,
+  "liveEvents": 671,
+  "bookmakers": [
+    {
+      "id": "novibet",
+      "name": "Novibet",
+      "eventsCount": 41494,
+      "marketsCount": 253858,
+      "lastFetch": "2025-11-09T11:02:29.131Z"
+    }
+  ],
+  "lastUpdated": "2025-11-09T11:45:06.129Z"
+}
+```

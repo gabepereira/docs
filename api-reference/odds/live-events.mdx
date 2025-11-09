@@ -1,0 +1,167 @@
+---
+title: "List Live Events"
+api: "GET https://api.mrdoge.co/odds/live-events"
+auth: "bearer"
+description: "Get all currently live events with real-time scores and odds"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **1 credit** per request.
+</Warning>
+
+Returns all events that are currently in progress across all sports. Updated every **10 seconds** with real-time scores, match statistics, and live odds.
+
+Perfect for building live scores dashboards or real-time betting applications.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+
+## Query Parameters
+
+<ParamField query="limit" type="string" default="20">
+  Maximum number of live events to return
+
+  Max: `100`
+</ParamField>
+
+<ParamField query="prioritize" type="string">
+  Smart sorting - prioritize popular leagues first
+
+  Values: `true` or `false`
+
+  When enabled, events from major leagues (Premier League, NBA, Champions League, etc.) appear first.
+</ParamField>
+
+## Response
+
+Returns an object with a `data` array containing live events with real-time information.
+
+<ResponseField name="data" type="array">
+  Array of live event objects (same structure as [Get Event Details](/api-reference/odds/event-details) but filtered to live events only)
+</ResponseField>
+
+### Live Event Includes
+
+Each live event includes:
+- Current scores
+- Match phase (1st half, 2nd half, quarter, etc.)
+- Match statistics (corners, cards, fouls, etc.)
+- Live odds for all markets
+- Time elapsed
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/odds/live-events?prioritize=true&limit=10"
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "43102832",
+      "competitionId": 35302,
+      "startDateTime": "2025-10-28T10:41:00.048Z",
+      "status": "live",
+      "sport": {
+        "name": "tennis"
+      },
+      "homeTeam": {
+        "id": 193974,
+        "name": "Jeremy Schifris"
+      },
+      "awayTeam": {
+        "id": 118617,
+        "name": "Lorenzo Bocchi"
+      },
+      "competition": {
+        "id": 35302,
+        "caption": "Itália - Selva Gardena"
+      },
+      "region": {
+        "id": 1187,
+        "caption": "ITF "
+      },
+      "liveEventData": [
+        {
+          "homeGoals": 0,
+          "awayGoals": 0,
+          "phaseCaption": "2º set finalizado",
+          "phaseCaptionLong": "Unknown",
+          "phaseSysname": "TENNIS_MATCH_SECOND_SET",
+          "isLive": true,
+          "isInPlay": false,
+          "liveDataJson": {
+            "setScores": [
+              {
+                "inPlay": false,
+                "caption": "1º Set",
+                "player1Score": 3,
+                "player2Score": 6,
+                "player1Winner": false,
+                "player2Winner": true
+              },
+              {
+                "inPlay": false,
+                "caption": "2º set",
+                "player1Score": 2,
+                "player2Score": 6,
+                "player1Winner": false,
+                "player2Winner": true
+              }
+            ],
+            "player1Sets": 0,
+            "player2Sets": 2
+          },
+          "lastUpdated": "2025-10-29T08:14:20.982Z"
+        }
+      ]
+    }
+  ],
+  "count": 2,
+  "timestamp": "2025-11-09T11:43:29.777Z"
+}
+```
+
+## Update Frequency
+
+<Info>
+  Live events data is updated every **10 seconds**. For the most up-to-date information, poll this endpoint at that interval or use WebSocket streaming for push updates.
+</Info>
+
+## Sports Coverage
+
+Live data is available for:
+- ⚽ Soccer (scores, corners, cards, substitutions)
+- 🏀 Basketball (scores per quarter, fouls)
+- ⚾ Baseball (innings, runs, hits, errors)
+- 🎾 Tennis (sets, games, points)
+- 🏈 American Football (quarters, yards, downs)
+- 🏒 Ice Hockey (periods, shots, power plays)
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Live Dashboard" icon="tv">
+    Display all currently live events with scores
+  </Card>
+
+  <Card title="In-Play Betting" icon="chart-line">
+    Show live odds for events in progress
+  </Card>
+
+  <Card title="Score Alerts" icon="bell">
+    Monitor events for goal/score notifications
+  </Card>
+
+  <Card title="Statistics Feed" icon="chart-simple">
+    Track live match statistics
+  </Card>
+</CardGroup>

@@ -29,18 +29,7 @@
             "pages": [
               "concepts/data-model",
               "concepts/sports-coverage",
-              "concepts/ai-explained",
-              "concepts/bet-settlement"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              "guides/getting-odds",
-              "guides/ai-predictions",
-              "guides/live-data",
-              "guides/filtering",
-              "guides/error-handling"
+              "concepts/ai-explained"
             ]
           }
         ]
@@ -70,30 +59,6 @@
               "api-reference/ai/value-opportunities",
               "api-reference/ai/processed-insights",
               "api-reference/ai/performance"
-            ]
-          },
-          {
-            "group": "Live Data",
-            "pages": [
-              "api-reference/live/live-odds",
-              "api-reference/live/odds-history",
-              "api-reference/live/odds-movement"
-            ]
-          },
-          {
-            "group": "Bet Settlement",
-            "pages": [
-              "api-reference/settlement/event-status",
-              "api-reference/settlement/settle-bet",
-              "api-reference/settlement/event-result"
-            ]
-          },
-          {
-            "group": "Authentication",
-            "pages": [
-              "api-reference/auth/api-keys",
-              "api-reference/auth/usage",
-              "api-reference/auth/tiers"
             ]
           }
         ]

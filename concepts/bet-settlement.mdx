@@ -1,0 +1,509 @@
+---
+title: "Bet Settlement"
+description: "How AI recommendations and Mr. Doge Picks are settled after events complete"
+---
+
+## Overview
+
+Mr. Doge automatically settles all AI-generated betting recommendations and Mr. Doge Picks after events are completed. This transparent settlement process allows you to track AI performance, validate recommendations, and understand actual returns.
+
+<Info>
+  **Automatic Settlement**: All recommendations are automatically evaluated and settled within minutes of events completing. No manual intervention needed.
+</Info>
+
+## Settlement Workflow
+
+```
+Event Completes
+    ↓
+Final Score Retrieved
+    ↓
+Betting Recommendations Evaluated
+    ↓
+Mr. Doge Picks Evaluated
+    ↓
+Results Stored (won/lost/push)
+    ↓
+Settlement Stats Updated
+```
+
+### When Settlement Occurs
+
+- **Trigger**: When event status changes to `completed`
+- **Timing**: Within 2-5 minutes of event completion
+- **Data Source**: Final scores from `LiveEventData`
+- **Frequency**: Continuous background process
+
+---
+
+## Settlement Outcomes
+
+Every bet recommendation can have one of three outcomes:
+
+### Won
+
+**What it means**: The bet prediction was correct
+
+**Criteria**:
+- For Match Result: Predicted team won
+- For Over/Under: Total crossed the threshold correctly
+- For BTTS: Both teams scored (or didn't) as predicted
+- For Handicap: Team covered the spread
+
+**Result Fields:**
+- `settled`: `true`
+- `result`: `won`
+- `actualReturn`: Original odds value (e.g., 2.10 for £100 stake = £210 total return)
+- `settlementDate`: Timestamp of settlement
+
+**Example:**
+```json
+{
+  "id": "rec_123",
+  "outcome": "Home Win",
+  "odds": 2.10,
+  "confidence": "High",
+  "settled": true,
+  "result": "won",
+  "actualReturn": 2.10,
+  "settlementDate": "2025-11-08T17:05:00Z"
+}
+```
+
+---
+
+### Lost
+
+**What it means**: The bet prediction was incorrect
+
+**Criteria**:
+- Prediction did not materialize
+- Opposite outcome occurred
+- Threshold not met
+
+**Result Fields:**
+- `settled`: `true`
+- `result`: `lost`
+- `actualReturn`: `0` (stake lost)
+- `settlementDate`: Timestamp of settlement
+
+**Example:**
+```json
+{
+  "id": "rec_124",
+  "outcome": "Over 2.5 Goals",
+  "odds": 1.85,
+  "confidence": "Medium",
+  "settled": true,
+  "result": "lost",
+  "actualReturn": 0,
+  "settlementDate": "2025-11-08T17:05:00Z"
+}
+```
+
+---
+
+### Push (Void/Refund)
+
+**What it means**: Bet is refunded, no win or loss
+
+**When this happens:**
+- **Exact number hit**: Over/Under bet lands exactly on the line (e.g., 2 goals when line is 2.0)
+- **Missing data**: Final score unavailable for completed event
+- **Event void**: Match abandoned, postponed after starting, or result voided
+- **Handicap push**: Adjusted score equals the spread exactly
+
+**Result Fields:**
+- `settled`: `true`
+- `result`: `push`
+- `actualReturn`: `0` (original stake refunded, no profit/loss)
+- `settlementDate`: Timestamp of settlement
+
+**Example:**
+```json
+{
+  "id": "rec_125",
+  "outcome": "Over 2.0 Goals",
+  "odds": 1.90,
+  "confidence": "High",
+  "settled": true,
+  "result": "push",
+  "actualReturn": 0,
+  "settlementDate": "2025-11-08T17:05:00Z"
+}
+```
+
+<Tip>
+  **Push = Stake Returned**: Think of a push as if the bet never happened. Your bankroll stays the same.
+</Tip>
+
+---
+
+## Mr. Doge Picks Settlement
+
+Mr. Doge Picks can be **single bets** or **parlays** (multiple legs combined). Settlement logic differs based on pick type.
+
+### Single Picks
+
+**Settlement**: Uses the same logic as individual betting recommendations.
+
+**Example:**
+```json
+{
+  "id": "pick_001",
+  "pickType": "single",
+  "recommendations": [
+    {
+      "eventId": "evt_123",
+      "outcome": "Home Win",
+      "odds": 2.10
+    }
+  ],
+  "totalOdds": 2.10,
+  "settled": true,
+  "result": "won",
+  "actualReturn": 2.10
+}
+```
+
+---
+
+### Parlay Picks
+
+**Settlement Rule**: **ALL legs must win** for the parlay to win.
+
+**Logic:**
+```typescript
+if (any leg is "lost") return "lost";
+if (any leg is "push" && no legs lost) return "push";
+if (all legs are "won") return "won";
+```
+
+**Example 1: All Legs Win**
+```json
+{
+  "id": "pick_002",
+  "pickType": "parlay",
+  "recommendations": [
+    {"event": "Arsenal vs Chelsea", "outcome": "Arsenal", "result": "won"},
+    {"event": "Liverpool vs City", "outcome": "Over 2.5", "result": "won"},
+    {"event": "United vs Spurs", "outcome": "BTTS Yes", "result": "won"}
+  ],
+  "totalOdds": 8.50,
+  "settled": true,
+  "result": "won",
+  "actualReturn": 8.50
+}
+```
+**Outcome**: **Won** (all 3 legs won)
+
+---
+
+**Example 2: One Leg Loses**
+```json
+{
+  "recommendations": [
+    {"event": "Arsenal vs Chelsea", "outcome": "Arsenal", "result": "won"},
+    {"event": "Liverpool vs City", "outcome": "Over 2.5", "result": "lost"},
+    {"event": "United vs Spurs", "outcome": "BTTS Yes", "result": "won"}
+  ],
+  "result": "lost"
+}
+```
+**Outcome**: **Lost** (1 leg lost = entire parlay lost)
+
+---
+
+**Example 3: One Leg Pushes**
+```json
+{
+  "recommendations": [
+    {"event": "Arsenal vs Chelsea", "outcome": "Arsenal", "result": "won"},
+    {"event": "Liverpool vs City", "outcome": "Over 2.0", "result": "push"},
+    {"event": "United vs Spurs", "outcome": "BTTS Yes", "result": "won"}
+  ],
+  "result": "push"
+}
+```
+**Outcome**: **Push** (1 leg pushed, others won, stake refunded)
+
+<Warning>
+  **Parlay Risk**: Parlays have higher potential returns but significantly lower win probability. A 3-leg parlay at 60% accuracy per leg only has 21.6% chance of winning all three (0.60³).
+</Warning>
+
+---
+
+## Settlement Data Source
+
+### Live Event Data
+
+Settlement relies on `LiveEventData` which contains:
+
+```json
+{
+  "eventId": "evt_123",
+  "homeGoals": 2,
+  "awayGoals": 1,
+  "homeCorners": 8,
+  "awayCorners": 4,
+  "homeYellowCards": 2,
+  "awayYellowCards": 1,
+  "homeRedCards": 0,
+  "awayRedCards": 0,
+  "homeGoalsFirstHalf": 1,
+  "awayGoalsFirstHalf": 0,
+  "phaseSysname": "SOCCER_MATCH_SECOND_HALF",
+  "isLive": false
+}
+```
+
+**What if data is missing?**
+- If `homeGoals` or `awayGoals` are `null` → All bets settled as **push**
+- If corner/card data missing for corner/card markets → Those bets settled as **push**
+- If first-half data missing for first-half markets → Those bets settled as **push**
+
+<Note>
+  **Data Reliability**: We use real-time data providers to ensure accurate settlement. In rare cases where provider data is incorrect, settlements may be manually reviewed and corrected.
+</Note>
+
+---
+
+## Tracking Settlement Stats
+
+### API Endpoint
+
+**Get Settlement Statistics:**
+```
+GET /api/settlement/stats?days=30
+```
+
+**Response:**
+```json
+{
+  "period": "30 days",
+  "recommendations": {
+    "total": 450,
+    "wins": 285,
+    "losses": 150,
+    "pushes": 15,
+    "winRate": "63.3%"
+  },
+  "picks": {
+    "total": 75,
+    "wins": 32,
+    "losses": 40,
+    "pushes": 3,
+    "winRate": "42.7%"
+  },
+  "byConfidence": {
+    "High": { "total": 120, "winRate": "68.3%" },
+    "Medium": { "total": 210, "winRate": "61.4%" },
+    "Low": { "total": 120, "winRate": "57.5%" }
+  }
+}
+```
+
+---
+
+### Individual Recommendation Tracking
+
+**Check if recommendation is settled:**
+```
+GET /ai/betting-recommendations?settled=true
+```
+
+**Filter by result:**
+```
+GET /ai/betting-recommendations?result=won
+GET /ai/betting-recommendations?result=lost
+GET /ai/betting-recommendations?result=push
+```
+
+**Get recommendations for specific event:**
+```
+GET /api/events/{eventId}/betting-recommendations
+```
+
+---
+
+## Settlement Timeline Example
+
+**Real-world example:**
+
+```
+15:00:00 - Match: Arsenal vs Chelsea kicks off
+15:45:00 - Half-time: 1-0 to Arsenal
+16:50:00 - Full-time: 2-1 to Arsenal
+16:51:30 - LiveEventData updated with final score
+16:52:00 - Settlement process starts
+16:52:15 - Betting recommendations evaluated
+16:52:20 - Mr. Doge picks evaluated
+16:52:25 - Database updated with results
+16:52:30 - Settlement complete
+```
+
+**Recommendations settled:**
+- ✅ Arsenal to Win (odds 2.10) → **Won**
+- ✅ Over 2.5 Goals (odds 1.85) → **Won** (3 total goals)
+- ❌ BTTS No (odds 2.20) → **Lost** (both teams scored)
+- ✅ Arsenal -1 Handicap (odds 2.50) → **Won** (Arsenal won by 1)
+
+---
+
+## Handling Edge Cases
+
+### Event Postponed
+
+**Scenario**: Match postponed before kickoff or after starting
+
+**Settlement**:
+- If event never starts: No settlement needed (bets voided)
+- If event starts then postponed: All bets settled as **push** when status changes to `postponed`
+
+---
+
+### Match Abandoned
+
+**Scenario**: Match stopped before completion (e.g., weather, crowd trouble)
+
+**Settlement**:
+- Event status: `completed` with void flag
+- All bets settled as **push**
+- Stake refunded
+
+---
+
+### Data Provider Error
+
+**Scenario**: Final score incorrect or missing
+
+**Settlement**:
+- If score unavailable: All bets settled as **push**
+- If score later corrected: Manual review and re-settlement if necessary
+
+---
+
+### Conflicting Results
+
+**Scenario**: Two markets with contradictory results in a parlay
+
+**Settlement**:
+- Each leg evaluated independently
+- Parlay result based on all individual leg results
+- Validation layer prevents recommending contradictory parlays
+
+---
+
+## Viewing Settlement History
+
+### Dashboard
+
+View your settlement history in the Mr. Doge dashboard:
+
+1. Navigate to **AI Recommendations**
+2. Filter by **Settled** recommendations
+3. View results breakdown by confidence level
+4. Track historical win rate
+
+### API Access
+
+**Get your bets with settlement data:**
+```javascript
+const response = await fetch('https://api.mrdoge.co/ai/betting-recommendations?settled=true', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY'
+  }
+});
+
+const recommendations = await response.json();
+
+recommendations.forEach(rec => {
+  console.log(`${rec.outcome}: ${rec.result} (${rec.odds})`);
+  console.log(`Return: ${rec.actualReturn}`);
+});
+```
+
+---
+
+## FAQs
+
+<AccordionGroup>
+  <Accordion title="How long does settlement take?" icon="clock">
+    **Typical Timeline:**
+    - Event completes → 1-2 minutes for final score update
+    - Final score available → 30 seconds for settlement process
+    - **Total: 2-5 minutes after event completion**
+
+    Delays can occur if:
+    - Data provider is slow to update scores
+    - Event status not yet marked as `completed`
+    - High system load (many events completing simultaneously)
+  </Accordion>
+
+  <Accordion title="What if I disagree with a settlement?" icon="gavel">
+    Settlement is automatic based on official final scores. If you believe there's an error:
+
+    1. Check the final score in `LiveEventData`
+    2. Verify the market rules for that bet type
+    3. Contact support@mrdoge.co with:
+       - Recommendation ID
+       - Event ID
+       - Reason for dispute
+       - Supporting evidence (official match report, etc.)
+
+    We'll manually review and correct if there was an error.
+  </Accordion>
+
+  <Accordion title="Do pushes count in win rate?" icon="percent">
+    **No.** Win rate calculations exclude pushes:
+
+    ```
+    Win Rate = Wins / (Wins + Losses)
+    ```
+
+    Pushes are tracked separately but don't affect win rate since they're neither wins nor losses (stake refunded).
+  </Accordion>
+
+  <Accordion title="Can I see settlement before it happens?" icon="eye">
+    **No.** Settlement only occurs after events complete. You can:
+    - View unsettled recommendations: `?settled=false`
+    - Track live events: `GET /odds/live-events`
+    - Monitor event status: `GET /odds/events/:id/status`
+
+    But you won't see settlement results until the event is marked `completed` and settlement runs.
+  </Accordion>
+
+  <Accordion title="What happens to parlays if one leg is void?" icon="link">
+    **Void/Push legs in parlays:**
+    - If all other legs win → Parlay result is **push** (refund)
+    - If any leg loses → Parlay result is **lost** (even if one leg was void)
+
+    Example:
+    - Leg 1: Won
+    - Leg 2: Push (void)
+    - Leg 3: Won
+    - **Result: Push** (stake refunded)
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="AI Explained" icon="brain" href="/concepts/ai-explained">
+    Understand how AI generates recommendations
+  </Card>
+
+  <Card title="Data Model" icon="diagram-project" href="/concepts/data-model">
+    See BettingRecommendation and settlement fields
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/ai/recommendations">
+    Access settlement data via API
+  </Card>
+
+  <Card title="Dashboard" icon="chart-line" href="https://mrdoge.co/dashboard">
+    View your settlement history and stats
+  </Card>
+</CardGroup>

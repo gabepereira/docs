@@ -1,0 +1,329 @@
+---
+title: "Get Mr. Doge Picks"
+api: "GET https://api.mrdoge.co/ai/mr-doge-picks"
+auth: "bearer"
+description: "Get featured AI-curated betting picks - single bets or parlays"
+---
+
+<Warning>
+  **Premium Endpoint**: Costs **10 credits** per request
+</Warning>
+
+Returns Mr. Doge's featured betting picks - carefully curated AI recommendations that represent the best value opportunities. Picks can be single bets or parlays combining multiple selections.
+
+These are our highest-confidence recommendations, combining multiple data points including:
+- Team form analysis
+- Statistical modeling
+- Market efficiency assessment
+- Historical performance data
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+
+## Query Parameters
+
+<ParamField query="limit" type="string" default="5">
+  Maximum number of picks to return
+</ParamField>
+
+<ParamField query="today" type="string">
+  Only return picks for today's events
+
+  Values: `true` or `false`
+</ParamField>
+
+<ParamField query="tomorrow" type="string">
+  Only return picks for tomorrow's events
+
+  Values: `true` or `false`
+</ParamField>
+
+<ParamField query="timezone" type="string">
+  Timezone for date filtering
+
+  Example: `America/New_York`
+</ParamField>
+
+<ParamField query="regionId" type="string">
+  Filter picks by region
+</ParamField>
+
+<ParamField query="competitionId" type="string">
+  Filter picks by competition
+</ParamField>
+
+## Response
+
+Returns an array of Mr. Doge pick objects.
+
+<ResponseField name="id" type="string">
+  Unique pick ID
+</ResponseField>
+
+<ResponseField name="pickType" type="string">
+  Type of pick
+
+  Values:
+  - `single` - Single bet on one event
+  - `parlay` - Multiple bets combined (all must win)
+</ResponseField>
+
+<ResponseField name="recommendations" type="array">
+  Array of betting recommendations included in this pick
+
+  <Expandable title="Recommendation Object">
+    <ResponseField name="id" type="string">
+      Recommendation ID
+    </ResponseField>
+
+    <ResponseField name="eventId" type="string">
+      Event ID
+    </ResponseField>
+
+    <ResponseField name="outcome" type="string">
+      Predicted outcome (e.g., "Arsenal", "Over 2.5", "Lakers -5.5")
+    </ResponseField>
+
+    <ResponseField name="odds" type="number">
+      Decimal odds for this selection
+    </ResponseField>
+
+    <ResponseField name="confidence" type="string">
+      Confidence level: `High`, `Medium`, or `Low`
+    </ResponseField>
+
+    <ResponseField name="edgePercentage" type="number">
+      Statistical edge over market odds (percentage)
+    </ResponseField>
+
+    <ResponseField name="kellyFraction" type="number">
+      Optimal stake size using Kelly Criterion (10% fractional Kelly)
+    </ResponseField>
+
+    <ResponseField name="rationale" type="array">
+      Array of reasons why this pick was made
+    </ResponseField>
+
+    <ResponseField name="riskFactors" type="array">
+      Array of potential risks to consider
+    </ResponseField>
+
+    <ResponseField name="dataSupport" type="array">
+      Statistical data supporting this pick
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="totalOdds" type="number">
+  Combined odds for the pick
+
+  - For single picks: Same as the individual recommendation odds
+  - For parlays: Product of all individual odds
+</ResponseField>
+
+<ResponseField name="settled" type="boolean">
+  Whether the pick has been settled (event completed)
+</ResponseField>
+
+<ResponseField name="result" type="string">
+  Settlement result (if settled)
+
+  Values: `won`, `lost`, or `push`
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/ai/mr-doge-picks?today=true&limit=3"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.mrdoge.co/ai/mr-doge-picks?today=true&limit=3', {
+  headers: {
+    'Authorization': 'Bearer sk_live_...'
+  }
+});
+
+const picks = await response.json();
+console.log(picks);
+```
+
+```python Python
+import requests
+
+headers = {
+    'Authorization': 'Bearer sk_live_...'
+}
+
+response = requests.get(
+    'https://api.mrdoge.co/ai/mr-doge-picks',
+    headers=headers,
+    params={'today': 'true', 'limit': '3'}
+)
+
+picks = response.json()
+print(picks)
+```
+</CodeGroup>
+
+## Response
+
+<ResponseExample>
+
+```json Response
+{
+  "data": [
+    {
+      "id": "cmhr6tafl0fcrs201l9wg0mhr",
+      "pickType": "single",
+      "recommendations": [
+        {
+          "market": "SOCCER_MATCH_RESULT",
+          "outcome": "X",
+          "bookmaker": "Novibet",
+          "odds": 3.05,
+          "point": null,
+          "edgePercentage": 8.5,
+          "confidence": "High"
+        }
+      ],
+      "totalOdds": 3.05,
+      "edgePercentage": 8.5,
+      "confidence": "High",
+      "kellyFraction": 0.095,
+      "rationale": [
+        "Simulation predicts a 1-1 draw (70% probability)",
+        "Napoli's ability to grind out results despite poor form",
+        "Bologna's strong defensive record makes it likely for Napoli to avoid a loss",
+        "Data support: Simulated score of 1-1 indicates a strong likelihood of at least a draw; Napoli's away form shows they struggle to win but can avoid losses"
+      ],
+      "event": {
+        "id": "43136354",
+        "homeTeam": {
+          "id": 7008,
+          "name": "Bologna"
+        },
+        "awayTeam": {
+          "id": 157511,
+          "name": "Napoli"
+        },
+        "commenceTime": "2025-11-09T14:00:00.000Z",
+        "startDateTime": "2025-11-09T14:00:00.000Z",
+        "competition": {
+          "caption": "Serie A"
+        },
+        "competitionId": 25,
+        "status": "upcoming",
+        "league": "Serie A"
+      },
+      "featuredOrder": 5
+    },
+    {
+      "id": "cmhr6w2eu0feds201jedsqtbc",
+      "pickType": "single",
+      "recommendations": [
+        {
+          "market": "SOCCER_MATCH_RESULT",
+          "outcome": "X",
+          "bookmaker": "Novibet",
+          "odds": 4.25,
+          "point": null,
+          "edgePercentage": 9.8,
+          "confidence": "High"
+        }
+      ],
+      "totalOdds": 4.25,
+      "edgePercentage": 9.8,
+      "confidence": "High",
+      "kellyFraction": 0.105,
+      "rationale": [
+        "Simulation predicts a 2-2 draw (50% probability for Draw or Away Win)",
+        "Barcelona's defensive vulnerabilities are likely to be exploited by Celta Vigo",
+        "Celta's strong home attack and Barcelona's poor away form support this outcome",
+        "Data support: Simulated score of 2-2 indicates a strong chance for Draw or Away Win; Barcelona's away games have shown 100% BTTS, indicating vulnerability"
+      ],
+      "event": {
+        "id": "43074287",
+        "homeTeam": {
+          "id": 179609,
+          "name": "Celta Vigo"
+        },
+        "awayTeam": {
+          "id": 6985,
+          "name": "Barcelona"
+        },
+        "commenceTime": "2025-11-09T20:00:00.000Z",
+        "startDateTime": "2025-11-09T20:00:00.000Z",
+        "competition": {
+          "caption": "LaLiga"
+        },
+        "competitionId": 29,
+        "status": "upcoming",
+        "league": "LaLiga"
+      },
+      "featuredOrder": 5
+    }
+  ]
+}
+```
+
+</ResponseExample>
+
+## Understanding Parlays
+
+<Warning>
+  **Parlay Risk**: All selections in a parlay must win for the bet to win. While parlays offer higher potential returns, they have significantly lower win probability.
+</Warning>
+
+### Parlay Win Probability
+
+Example 3-leg parlay with 60% individual win rate:
+- Probability all 3 win: 0.60³ = **21.6%**
+- Individual bet at same odds would need ~55-58% win rate
+
+We only create parlays when:
+1. Each leg has High confidence (>60% expected win rate)
+2. Combined edge is still positive after accounting for correlation
+3. Events are independent (no overlapping outcomes)
+
+## Credit Cost
+
+<Info>
+  **10 credits per request** - Mr. Doge Picks cost more because they include enhanced analysis, correlation checking, and curation beyond simple recommendations.
+</Info>
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Featured Picks" icon="star">
+    Display top AI picks on your homepage
+  </Card>
+
+  <Card title="Daily Picks" icon="calendar">
+    Show today's best opportunities
+  </Card>
+
+  <Card title="Parlay Builder" icon="layer-group">
+    Use curated parlays for combined bets
+  </Card>
+
+  <Card title="Performance Tracking" icon="chart-line">
+    Track Mr. Doge pick results over time
+  </Card>
+</CardGroup>
+
+## Related Endpoints
+
+<Card title="Betting Recommendations" icon="lightbulb" href="/api-reference/ai/betting-recommendations">
+  For individual recommendations (2 credits) instead of curated picks
+</Card>
+
+<Card title="AI Performance" icon="chart-bar" href="/api-reference/ai/performance">
+  See historical performance of Mr. Doge picks
+</Card>

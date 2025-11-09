@@ -1,0 +1,296 @@
+---
+title: "AI Explained"
+description: "How Mr. Doge's AI identifies value betting opportunities"
+---
+
+## Overview
+
+Mr. Doge uses advanced machine learning to analyze sporting events and identify value betting opportunities. Our AI evaluates team performance, match context, and market odds to generate data-driven recommendations.
+
+<Info>
+  **Transparency First**: Every recommendation includes clear reasoning you can review. We show our work so you can make informed decisions.
+</Info>
+
+## What the AI Analyzes
+
+Our system evaluates multiple factors for each event:
+
+**Team Performance:**
+- Recent form and results
+- Home vs away performance splits
+- Head-to-head history
+- Scoring and defensive patterns
+
+**Match Context (Priority Leagues):**
+- Team news and lineup information
+- Weather conditions
+- Tactical matchups
+
+**Market Analysis:**
+- Current odds evaluation
+- Market efficiency assessment
+- Value opportunity detection
+
+<Note>
+  **Priority Competitions**: Major leagues (Premier League, La Liga, Champions League, NBA, etc.) receive enhanced analysis with real-time context and deeper research.
+</Note>
+
+---
+
+## Understanding Confidence Levels
+
+Every recommendation has a confidence rating based on statistical edge:
+
+### High Confidence (Edge > 5%)
+
+- **What it means**: Strong statistical advantage over market odds
+- **Expected accuracy**: 60-65% win rate
+- **When it happens**: Clear form advantage, market inefficiency, or strong tactical mismatch
+
+### Medium Confidence (Edge 3-5%)
+
+- **What it means**: Moderate statistical advantage
+- **Expected accuracy**: 55-60% win rate
+- **When it happens**: Slight market inefficiency or minor form advantage
+
+### Low Confidence (Edge < 3%)
+
+- **What it means**: Marginal edge, higher risk
+- **Expected accuracy**: 50-55% win rate
+- **Note**: We rarely recommend Low confidence bets
+
+<Warning>
+  **No Guaranteed Winners**: Even High confidence picks can lose. Confidence reflects statistical edge, not certainty. Proper bankroll management is essential.
+</Warning>
+
+---
+
+## Kelly Criterion & Stake Sizing
+
+The AI calculates optimal stake sizes using the **Kelly Criterion**, a mathematical formula for maximizing long-term growth.
+
+### How It Works
+
+```
+Kelly % = (Edge × Odds - 1) / (Odds - 1)
+```
+
+**Example:**
+- Odds: 2.10
+- Edge: 6.8%
+- Kelly = 3.2% of bankroll
+
+### Fractional Kelly (Recommended)
+
+We recommend **10% fractional Kelly** for safer bankroll management:
+
+- Full Kelly: 3.2% of bankroll
+- 10% Fractional Kelly: **0.32%** of bankroll
+
+**Why Fractional Kelly?**
+- Reduces volatility
+- More conservative approach
+- Protects against estimation errors
+- Still captures most of the edge
+
+### Practical Example
+
+**Your Bankroll: $1,000**
+
+**Recommendation:**
+- Odds: 2.10
+- Edge: 6.8%
+- Kelly Fraction: 0.032 (3.2%)
+
+**Stake Calculation:**
+- Full Kelly: $1,000 × 0.032 = $32
+- 10% Fractional Kelly: $32 × 0.10 = **$3.20**
+
+<Tip>
+  **Start Small**: If you're new to value betting, consider using 5% fractional Kelly (half our recommendation) until you're comfortable with variance.
+</Tip>
+
+---
+
+## Reading Recommendations
+
+Every recommendation includes three key sections:
+
+### Rationale
+
+Why the AI picked this bet:
+
+```json
+"rationale": [
+  "Home team's excellent form (8 wins in last 10)",
+  "Away team struggling defensively (10 goals conceded in 3 games)",
+  "Strong home advantage (75% win rate at home)"
+]
+```
+
+**Look for:**
+- ✅ Data-backed claims with recent statistics
+- ✅ Specific tactical insights
+- ✅ Clear logical reasoning
+
+### Risk Factors
+
+Reasons why the pick might not win:
+
+```json
+"riskFactors": [
+  "Away team has key players returning from injury",
+  "Weather forecast shows heavy rain"
+]
+```
+
+**Use this to:**
+- Assess if the risk outweighs the edge
+- Decide whether to skip the bet
+- Adjust stake size if unsure
+
+### Data Support
+
+Statistical basis for the recommendation:
+
+```json
+"dataSupport": [
+  "Simulation gives 52% home win probability vs 47.6% implied by odds",
+  "Expected goals: Home 1.8, Away 1.1"
+]
+```
+
+This shows you the math behind the recommendation.
+
+---
+
+## Market Efficiency Score
+
+The AI calculates a **Market Efficiency Score** (0-100) for each event:
+
+- **90-100**: Extremely efficient, rare value opportunities
+- **80-89**: Efficient market, requires deep analysis
+- **70-79**: Moderately efficient, value exists
+- **Below 70**: Inefficient market, multiple opportunities
+
+**What affects efficiency:**
+- League popularity (Premier League more efficient than lower tiers)
+- Time until kickoff (closer = more efficient)
+- Public attention (high-profile matches = more efficient)
+
+
+---
+
+## Mr. Doge Picks vs Betting Recommendations
+
+### Betting Recommendations
+
+**What they are:**
+- Individual value bets for specific markets
+- Available for all analyzed events
+- Confidence-rated (Low/Medium/High)
+- Single-bet recommendations
+
+**Access:** `GET /ai/betting-recommendations` (2 credits)
+
+### Mr. Doge Picks
+
+**What they are:**
+- Curated picks combining multiple recommendations
+- Featured selections for maximum value
+- Can be single events or parlays
+- Pre-calculated combined odds
+
+**Access:** `GET /ai/mr-doge-picks` (10 credits)
+
+<Tip>
+  **For Beginners**: Start with individual Betting Recommendations to understand how the AI works. Graduate to Mr. Doge Picks once you're comfortable.
+</Tip>
+
+---
+
+## Limitations & Disclaimers
+
+### What the AI Can't Predict
+
+- **Referee decisions**: Red cards, penalties, VAR calls
+- **Individual brilliance**: Wonder goals, goalkeeper errors
+- **Motivational factors**: Team morale, manager pressure
+- **Random variance**: Bad luck, post hits, own goals
+
+### Past Performance ≠ Future Results
+
+The AI analyzes historical data, but:
+- Teams change (injuries, form shifts, new players)
+- Tactics evolve
+- External factors matter (weather, referee, crowd)
+- Variance is inherent in sports
+
+<Warning>
+  **No Guarantee of Profit**: Value betting requires discipline, bankroll management, and patience. Short-term losses are normal even with positive expected value. Only bet what you can afford to lose.
+</Warning>
+
+---
+
+## FAQs
+
+<AccordionGroup>
+  <Accordion title="How often are recommendations updated?" icon="clock">
+    AI analysis runs continuously:
+    - New events analyzed as they become available
+    - Recommendations refresh when odds change significantly
+    - Enhanced analysis runs 24-48 hours before kickoff for priority matches
+  </Accordion>
+
+  <Accordion title="Why some matches are missing recommendations?" icon="question">
+    Possible reasons:
+    - Data quality doesn't meet standards
+    - Event too far in the future (odds not stable)
+  </Accordion>
+
+  <Accordion title="Can I trust High confidence picks?" icon="shield-check">
+    High confidence picks have a **statistical edge**, meaning over many bets they should be profitable. However:
+    - Any single pick can lose (variance is normal)
+    - We estimate 60-65% win rate for High confidence
+    - Requires proper bankroll management
+    - Long-term discipline is essential
+  </Accordion>
+
+  <Accordion title="How is this different from tipsters?" icon="users">
+    Key differences:
+    - **Transparent**: Full reasoning provided for every pick
+    - **Data-driven**: Based on statistics, not gut feeling
+    - **Systematic**: Same process applied to every event
+    - **Accountable**: Track record is verifiable via API
+    - **No bias**: AI doesn't have favorite teams
+  </Accordion>
+
+  <Accordion title="What sports does the AI cover?" icon="futbol">
+    Currently AI recommendations are available for:
+    - ⚽ Soccer (all major leagues)
+
+    Other sports receive odds data but not yet AI analysis.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Data Model" icon="diagram-project" href="/concepts/data-model">
+    See BettingRecommendation data structure
+  </Card>
+
+  <Card title="Bet Settlement" icon="check-circle" href="/concepts/bet-settlement">
+    Learn how bets are settled and tracked
+  </Card>
+
+  <Card title="API Reference" icon="code" href="/api-reference/ai/recommendations">
+    Access AI recommendations via API
+  </Card>
+
+  <Card title="Dashboard" icon="chart-line" href="https://mrdoge.co/dashboard">
+    View recommendations in your dashboard
+  </Card>
+</CardGroup>

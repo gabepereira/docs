@@ -1,0 +1,41 @@
+---
+title: "Health Check"
+api: "GET https://api.mrdoge.co/odds/health"
+description: "Check the API service health status, database connectivity, and version information"
+---
+
+<Info>
+  **Public Endpoint**: No API key required
+</Info>
+
+This endpoint is useful for:
+- Monitoring API uptime
+- Verifying database connectivity
+- Checking API version
+
+## Response
+
+<ResponseField name="status" type="string">
+  Service health status (`ok` or `error`)
+</ResponseField>
+
+<ResponseField name="database" type="string">
+  Database connection status (`connected` or `disconnected`)
+</ResponseField>
+
+<ResponseField name="version" type="string">
+  Current API version
+</ResponseField>
+
+<ResponseExample>
+
+```json Response
+{
+  "timestamp": "2025-11-09T11:40:07.819Z",
+  "status": "healthy",
+  "database": "connected",
+  "version": "2.0.0"
+}
+```
+
+</ResponseExample>

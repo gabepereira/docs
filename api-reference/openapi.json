@@ -1,16 +1,19 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
-    "version": "1.0.0"
+    "title": "Mr. Doge API",
+    "description": "Comprehensive sports betting odds, AI predictions, and live data API covering 8 major sports with real-time updates and value betting recommendations.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Mr. Doge Support",
+      "email": "support@mrdoge.co",
+      "url": "https://mrdoge.co"
+    }
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.mrdoge.co",
+      "description": "Production server"
     }
   ],
   "security": [
@@ -19,76 +22,33 @@
     }
   ],
   "paths": {
-    "/plants": {
+    "/odds/health": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
+        "summary": "Health Check",
+        "description": "Check the API service health status, database connectivity, and version information.",
+        "tags": ["Odds"],
+        "security": [],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Service is healthy",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "database": {
+                      "type": "string",
+                      "example": "connected"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.0.0"
+                    }
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -96,122 +56,1375 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/odds/regions": {
+      "get": {
+        "summary": "List Regions",
+        "description": "Get all available regions (countries) with sports coverage, competition counts, and localized names.",
+        "tags": ["Odds"],
+        "security": [],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
+            "name": "locale",
+            "in": "query",
+            "description": "Language code for localized region names",
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string",
+              "default": "en",
+              "example": "en"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter regions with events on specific date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-11-08"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Filter regions with events starting from this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "Filter regions with events ending on this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for date filtering",
+            "schema": {
+              "type": "string",
+              "example": "America/New_York"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "List of regions",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Region"
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+    },
+    "/odds/competitions": {
+      "get": {
+        "summary": "List Competitions",
+        "description": "Get all available competitions (leagues/tournaments) with event counts.",
+        "tags": ["Odds"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "regionId",
+            "in": "query",
+            "description": "Filter by region ID",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter competitions with events on specific date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-11-08"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Filter competitions with events starting from this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "Filter competitions with events ending on this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "includeCompleted",
+            "in": "query",
+            "description": "Include completed events in count",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"],
+              "default": "false"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for date filtering",
+            "schema": {
+              "type": "string",
+              "example": "America/New_York"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of competitions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Competition"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "/odds/events": {
+      "get": {
+        "summary": "List Events",
+        "description": "Get sporting events with filtering by competition, region, date, and status. Returns events with basic information.",
+        "tags": ["Odds"],
+        "parameters": [
+          {
+            "name": "competitionId",
+            "in": "query",
+            "description": "Filter by competition ID",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "regionId",
+            "in": "query",
+            "description": "Filter by region ID",
+            "schema": {
+              "type": "string",
+              "example": "1"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Filter by event status",
+            "schema": {
+              "type": "string",
+              "enum": ["upcoming", "live", "completed"]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Filter events on specific date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-11-08"
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Filter events starting from this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "Filter events ending on this date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of events to return",
+            "schema": {
+              "type": "string",
+              "example": "50"
+            }
+          },
+          {
+            "name": "includeCompleted",
+            "in": "query",
+            "description": "Include completed events",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"],
+              "default": "false"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for date filtering",
+            "schema": {
+              "type": "string",
+              "example": "America/New_York"
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "List of events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Event"
+                      }
+                    },
+                    "count": {
+                      "type": "integer",
+                      "example": 45
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/InsufficientCredits"
+          }
+        }
+      }
+    },
+    "/odds/events/{eventId}": {
+      "get": {
+        "summary": "Get Event Details",
+        "description": "Get complete event information including teams, markets, odds, live data, AI recommendations, and Mr. Doge picks. This endpoint returns all data needed to display a full event page.",
+        "tags": ["Odds"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "description": "Event ID",
+            "schema": {
+              "type": "string",
+              "example": "evt_123456"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Event details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/odds/live-events": {
+      "get": {
+        "summary": "List Live Events",
+        "description": "Get all currently live events with real-time scores and odds. Updated every 10 seconds.",
+        "tags": ["Odds"],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of live events to return",
+            "schema": {
+              "type": "string",
+              "example": "20"
+            }
+          },
+          {
+            "name": "prioritize",
+            "in": "query",
+            "description": "Smart sorting (popular leagues first)",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of live events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LiveEvent"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/odds/trending-events": {
+      "get": {
+        "summary": "Get Trending Events",
+        "description": "Get today's most-viewed events with AI picks and recommendations. Useful for discovering popular betting opportunities.",
+        "tags": ["Odds"],
+        "parameters": [
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for 'today' calculation",
+            "schema": {
+              "type": "string",
+              "example": "America/New_York"
+            }
+          },
+          {
+            "name": "sport",
+            "in": "query",
+            "description": "Filter by sport name",
+            "schema": {
+              "type": "string",
+              "example": "soccer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Trending events",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrendingEvent"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/odds/teams": {
+      "get": {
+        "summary": "Search Teams",
+        "description": "Search for teams by name across all sports.",
+        "tags": ["Odds"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "Team name to search for",
+            "schema": {
+              "type": "string",
+              "example": "Arsenal"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum results",
+            "schema": {
+              "type": "string",
+              "default": "50"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of teams",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Team"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/odds/stats": {
+      "get": {
+        "summary": "Get API Statistics",
+        "description": "Get overall statistics about available data in the API (total regions, competitions, events, etc.).",
+        "tags": ["Odds"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "regions": {
+                      "type": "integer",
+                      "example": 50
+                    },
+                    "competitions": {
+                      "type": "integer",
+                      "example": 250
+                    },
+                    "events": {
+                      "type": "integer",
+                      "example": 5000
+                    },
+                    "teams": {
+                      "type": "integer",
+                      "example": 10000
+                    },
+                    "markets": {
+                      "type": "integer",
+                      "example": 50000
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/mr-doge-picks": {
+      "get": {
+        "summary": "Get Mr. Doge Picks",
+        "description": "Get featured AI-curated betting picks. These are high-confidence recommendations that can be single bets or parlays. Costs 10 credits per request.",
+        "tags": ["AI"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of picks",
+            "schema": {
+              "type": "string",
+              "default": "5"
+            }
+          },
+          {
+            "name": "today",
+            "in": "query",
+            "description": "Only picks for today",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            }
+          },
+          {
+            "name": "tomorrow",
+            "in": "query",
+            "description": "Only picks for tomorrow",
+            "schema": {
+              "type": "string",
+              "enum": ["true", "false"]
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for date filtering",
+            "schema": {
+              "type": "string",
+              "example": "America/New_York"
+            }
+          },
+          {
+            "name": "regionId",
+            "in": "query",
+            "description": "Filter by region",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "competitionId",
+            "in": "query",
+            "description": "Filter by competition",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Mr. Doge picks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MrDogePick"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/InsufficientCredits"
+          }
+        }
+      }
+    },
+    "/ai/betting-recommendations": {
+      "get": {
+        "summary": "Get Betting Recommendations",
+        "description": "Get AI-generated value betting recommendations for individual markets. Each recommendation includes confidence level, edge percentage, Kelly fraction, rationale, and risk factors. Costs 2 credits per request.",
+        "tags": ["AI"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "query",
+            "description": "Filter by event ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "confidence",
+            "in": "query",
+            "description": "Filter by confidence level",
+            "schema": {
+              "type": "string",
+              "enum": ["High", "Medium", "Low"]
+            }
+          },
+          {
+            "name": "minEdge",
+            "in": "query",
+            "description": "Minimum edge percentage",
+            "schema": {
+              "type": "string",
+              "example": "5"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum recommendations",
+            "schema": {
+              "type": "string",
+              "default": "10"
+            }
+          },
+          {
+            "name": "regionId",
+            "in": "query",
+            "description": "Filter by region",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "competitionId",
+            "in": "query",
+            "description": "Filter by competition",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for date filtering",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Betting recommendations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BettingRecommendation"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/InsufficientCredits"
+          }
+        }
+      }
+    },
+    "/ai/value-opportunities": {
+      "get": {
+        "summary": "Get Top Value Opportunities",
+        "description": "Get the highest-edge betting opportunities currently available. Returns only recommendations that meet minimum edge threshold.",
+        "tags": ["AI"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "minEdge",
+            "in": "query",
+            "description": "Minimum edge percentage",
+            "schema": {
+              "type": "string",
+              "default": "5"
+            }
+          },
+          {
+            "name": "confidence",
+            "in": "query",
+            "description": "Filter by confidence level",
+            "schema": {
+              "type": "string",
+              "enum": ["High", "Medium", "Low"]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum opportunities",
+            "schema": {
+              "type": "string",
+              "default": "5"
+            }
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "description": "Timezone for date filtering",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Value opportunities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "opportunities": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BettingRecommendation"
+                      }
+                    },
+                    "summary": {
+                      "type": "object",
+                      "properties": {
+                        "totalOpportunities": {
+                          "type": "integer"
+                        },
+                        "averageEdge": {
+                          "type": "number"
+                        },
+                        "highConfidence": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/performance": {
+      "get": {
+        "summary": "Get AI Performance Metrics",
+        "description": "Get historical performance statistics for AI recommendations including win rates, ROI, and performance by confidence level.",
+        "tags": ["AI"],
+        "security": [],
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "description": "Number of days to analyze",
+            "schema": {
+              "type": "string",
+              "default": "30"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Performance metrics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformanceMetrics"
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key",
+        "description": "Use your API key from the Mr. Doge dashboard. Format: `Bearer sk_live_...` or `Bearer sk_test_...`"
+      }
+    },
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "Region": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
+          "id": {
+            "type": "integer",
+            "example": 1
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "caption": {
+            "type": "string",
+            "example": "England"
+          },
+          "_count": {
+            "type": "object",
+            "properties": {
+              "competitions": {
+                "type": "integer",
+                "example": 5
+              },
+              "events": {
+                "type": "integer",
+                "example": 120
+              }
+            }
+          },
+          "availableSports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["soccer", "tennis"]
+          },
+          "competitions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Competition"
+            }
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
+      "Competition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
           },
-          {
-            "required": [
-              "id"
-            ],
+          "caption": {
+            "type": "string",
+            "example": "Premier League"
+          },
+          "regionId": {
+            "type": "integer",
+            "example": 1
+          },
+          "region": {
+            "$ref": "#/components/schemas/Region"
+          },
+          "_count": {
             "type": "object",
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
+              "events": {
                 "type": "integer",
-                "format": "int64"
+                "example": 38
+              }
+            }
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "caption": {
+            "type": "string",
+            "example": "Arsenal"
+          },
+          "regionId": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "Event": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "evt_123456"
+          },
+          "competitionId": {
+            "type": "integer",
+            "example": 1
+          },
+          "homeTeamId": {
+            "type": "integer",
+            "example": 100,
+            "deprecated": true
+          },
+          "awayTeamId": {
+            "type": "integer",
+            "example": 101,
+            "deprecated": true
+          },
+          "regionId": {
+            "type": "integer",
+            "example": 1
+          },
+          "sportId": {
+            "type": "integer",
+            "example": 1
+          },
+          "startDateTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2025-11-08T15:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["upcoming", "live", "completed"],
+            "example": "upcoming"
+          },
+          "views": {
+            "type": "integer",
+            "example": 1250
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Sport-specific event metadata including teams, markets, and odds",
+            "properties": {
+              "sportName": {
+                "type": "string",
+                "example": "soccer"
+              },
+              "homeTeamName": {
+                "type": "string",
+                "example": "Arsenal"
+              },
+              "awayTeamName": {
+                "type": "string",
+                "example": "Chelsea"
+              }
+            }
+          }
+        }
+      },
+      "EventDetails": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Event"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "homeTeam": {
+                "$ref": "#/components/schemas/Team"
+              },
+              "awayTeam": {
+                "$ref": "#/components/schemas/Team"
+              },
+              "competition": {
+                "$ref": "#/components/schemas/Competition"
+              },
+              "region": {
+                "$ref": "#/components/schemas/Region"
+              },
+              "markets": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Market"
+                }
+              },
+              "liveEventData": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LiveEventData"
+                }
+              },
+              "bettingRecommendations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/BettingRecommendation"
+                }
+              },
+              "mrDogePick": {
+                "$ref": "#/components/schemas/MrDogePick"
               }
             }
           }
         ]
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "Market": {
         "type": "object",
         "properties": {
-          "error": {
+          "id": {
+            "type": "string",
+            "example": "mkt_123456"
+          },
+          "eventId": {
+            "type": "string",
+            "example": "evt_123456"
+          },
+          "betTypeSysname": {
+            "type": "string",
+            "example": "SOCCER_MATCH_RESULT"
+          },
+          "betItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BetItem"
+            }
+          }
+        }
+      },
+      "BetItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "bet_123456"
+          },
+          "marketId": {
+            "type": "string",
+            "example": "mkt_123456"
+          },
+          "code": {
+            "type": "string",
+            "example": "1"
+          },
+          "caption": {
+            "type": "string",
+            "example": "Home Win"
+          },
+          "price": {
+            "type": "number",
+            "format": "float",
+            "example": 2.10,
+            "description": "Decimal odds"
+          },
+          "oddsText": {
+            "type": "string",
+            "example": "2.10"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "example": true
+          }
+        }
+      },
+      "LiveEventData": {
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string"
+          },
+          "phaseSysname": {
+            "type": "string",
+            "example": "SOCCER_MATCH_SECOND_HALF"
+          },
+          "isLive": {
+            "type": "boolean",
+            "example": true
+          },
+          "liveDataJson": {
+            "type": "object",
+            "description": "Sport-specific live data (scores, statistics, etc.)"
+          }
+        }
+      },
+      "LiveEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Event"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "liveEventData": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/LiveEventData"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "TrendingEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Event"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mrDogePick": {
+                "$ref": "#/components/schemas/MrDogePick"
+              },
+              "bettingRecommendations": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/BettingRecommendation"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "BettingRecommendation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rec_123456"
+          },
+          "eventId": {
+            "type": "string",
+            "example": "evt_123456"
+          },
+          "marketId": {
+            "type": "string",
+            "example": "mkt_123456"
+          },
+          "betItemId": {
+            "type": "string",
+            "example": "bet_123456"
+          },
+          "outcome": {
+            "type": "string",
+            "example": "Home Win"
+          },
+          "odds": {
+            "type": "number",
+            "format": "float",
+            "example": 2.10
+          },
+          "confidence": {
+            "type": "string",
+            "enum": ["High", "Medium", "Low"],
+            "example": "High"
+          },
+          "edgePercentage": {
+            "type": "number",
+            "format": "float",
+            "example": 6.8,
+            "description": "Statistical edge over market odds"
+          },
+          "kellyFraction": {
+            "type": "number",
+            "format": "float",
+            "example": 0.032,
+            "description": "Optimal stake size using Kelly Criterion (10% fractional Kelly recommended)"
+          },
+          "rationale": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Home team's excellent form (8 wins in last 10)",
+              "Away team struggling defensively (10 goals conceded in 3 games)"
+            ]
+          },
+          "riskFactors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Away team has key players returning from injury"
+            ]
+          },
+          "dataSupport": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Simulation gives 52% home win probability vs 47.6% implied by odds"
+            ]
+          },
+          "settled": {
+            "type": "boolean",
+            "example": false
+          },
+          "result": {
+            "type": "string",
+            "enum": ["won", "lost", "push"],
+            "nullable": true
+          }
+        }
+      },
+      "MrDogePick": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pick_123456"
+          },
+          "pickType": {
+            "type": "string",
+            "enum": ["single", "parlay"],
+            "example": "parlay"
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BettingRecommendation"
+            }
+          },
+          "totalOdds": {
+            "type": "number",
+            "format": "float",
+            "example": 8.50,
+            "description": "Combined odds for parlay (product of all recommendation odds)"
+          },
+          "settled": {
+            "type": "boolean",
+            "example": false
+          },
+          "result": {
+            "type": "string",
+            "enum": ["won", "lost", "push"],
+            "nullable": true
+          }
+        }
+      },
+      "PerformanceMetrics": {
+        "type": "object",
+        "properties": {
+          "period": {
+            "type": "string",
+            "example": "30 days"
+          },
+          "recommendations": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "integer",
+                "example": 450
+              },
+              "wins": {
+                "type": "integer",
+                "example": 285
+              },
+              "losses": {
+                "type": "integer",
+                "example": 150
+              },
+              "pushes": {
+                "type": "integer",
+                "example": 15
+              },
+              "winRate": {
+                "type": "string",
+                "example": "63.3%"
+              }
+            }
+          },
+          "byConfidence": {
+            "type": "object",
+            "properties": {
+              "High": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "integer",
+                    "example": 120
+                  },
+                  "winRate": {
+                    "type": "string",
+                    "example": "68.3%"
+                  }
+                }
+              },
+              "Medium": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "integer",
+                    "example": 210
+                  },
+                  "winRate": {
+                    "type": "string",
+                    "example": "61.4%"
+                  }
+                }
+              },
+              "Low": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "type": "integer",
+                    "example": 120
+                  },
+                  "winRate": {
+                    "type": "string",
+                    "example": "57.5%"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
             "type": "integer",
-            "format": "int32"
+            "example": 400
           },
           "message": {
-            "type": "string"
+            "type": "string",
+            "example": "Invalid request parameters"
+          },
+          "error": {
+            "type": "string",
+            "example": "Bad Request"
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing or invalid API key",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 401,
+              "message": "Invalid API key",
+              "error": "Unauthorized"
+            }
+          }
+        }
+      },
+      "InsufficientCredits": {
+        "description": "Not enough credits to complete request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 403,
+              "message": "Insufficient credits. This endpoint costs 2 credits.",
+              "error": "Forbidden"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "statusCode": 404,
+              "message": "Event not found",
+              "error": "Not Found"
+            }
+          }
+        }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Odds",
+      "description": "Endpoints for accessing sports events, odds, and betting markets"
+    },
+    {
+      "name": "AI",
+      "description": "AI-powered betting recommendations and value opportunities"
+    }
+  ]
 }

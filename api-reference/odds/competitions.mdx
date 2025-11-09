@@ -1,0 +1,153 @@
+---
+title: "List Competitions"
+api: "GET https://api.mrdoge.co/odds/competitions"
+description: "Get all available competitions (leagues/tournaments) with event counts"
+---
+
+<Info>
+  **Public Endpoint**: No API key required
+</Info>
+
+Returns all competitions (leagues, tournaments, cups) across all sports. Each competition includes event counts and parent region information.
+
+Use this endpoint to:
+- Build competition selectors
+- Display leagues with upcoming matches
+- Filter events by competition
+- Show popular leagues
+
+## Query Parameters
+
+<ParamField query="regionId" type="string">
+  Filter competitions by region ID
+
+  Example: `1` for England
+</ParamField>
+
+<ParamField query="date" type="string">
+  Filter competitions with events on specific date (YYYY-MM-DD)
+
+  Example: `2025-11-08`
+</ParamField>
+
+<ParamField query="startDate" type="string">
+  Filter competitions with events starting from this date
+</ParamField>
+
+<ParamField query="endDate" type="string">
+  Filter competitions with events ending on this date
+</ParamField>
+
+<ParamField query="includeCompleted" type="string" default="false">
+  Include completed events in count
+
+  Values: `true` or `false`
+</ParamField>
+
+<ParamField query="timezone" type="string">
+  Timezone for date filtering
+
+  Example: `America/New_York`
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="array">
+  <Expandable title="Competition Object">
+    <ResponseField name="id" type="integer">
+      Competition ID
+    </ResponseField>
+
+    <ResponseField name="caption" type="string">
+      Competition name
+
+      Example: `Premier League`, `Champions League`
+    </ResponseField>
+
+    <ResponseField name="regionId" type="integer">
+      Parent region ID
+    </ResponseField>
+
+    <ResponseField name="region" type="object">
+      Region object with `id` and `caption`
+    </ResponseField>
+
+    <ResponseField name="_count" type="object">
+      <Expandable title="Count Object">
+        <ResponseField name="events" type="integer">
+          Number of events in this competition
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example Request
+
+```bash
+curl https://api.mrdoge.co/odds/competitions?regionId=1&date=2025-11-08
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "caption": "Premier League",
+      "regionId": 1,
+      "region": {
+        "id": 1,
+        "caption": "England"
+      },
+      "_count": {
+        "events": 10
+      }
+    },
+    {
+      "id": 2,
+      "caption": "Championship",
+      "regionId": 1,
+      "region": {
+        "id": 1,
+        "caption": "England"
+      },
+      "_count": {
+        "events": 12
+      }
+    }
+  ]
+}
+```
+
+## Popular Competitions by Sport
+
+<AccordionGroup>
+  <Accordion title="Soccer" icon="futbol">
+    - Premier League (England)
+    - La Liga (Spain)
+    - Serie A (Italy)
+    - Bundesliga (Germany)
+    - Ligue 1 (France)
+    - Champions League
+    - Europa League
+  </Accordion>
+
+  <Accordion title="Basketball" icon="basketball">
+    - NBA (USA)
+    - EuroLeague
+    - NCAA Basketball
+  </Accordion>
+
+  <Accordion title="Baseball" icon="baseball">
+    - MLB (USA)
+    - NPB (Japan)
+    - KBO (Korea)
+  </Accordion>
+
+  <Accordion title="American Football" icon="football">
+    - NFL (USA)
+    - NCAA Football
+  </Accordion>
+</AccordionGroup>

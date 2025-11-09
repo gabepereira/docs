@@ -1,0 +1,150 @@
+---
+title: "Get Trending Events"
+api: "GET https://api.mrdoge.co/odds/trending-events"
+auth: "bearer"
+description: "Get today's most-viewed events with AI picks and recommendations"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **1 credit** per request.
+</Warning>
+
+Returns the top 5 most-viewed events for today, including AI recommendations and Mr. Doge picks. Perfect for discovering popular betting opportunities and showing users what everyone else is looking at.
+
+Events are ranked by view count and include full AI analysis.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+
+## Query Parameters
+
+<ParamField query="timezone" type="string">
+  Timezone for calculating "today"
+
+  Example: `America/New_York`, `Europe/London`
+
+  Default: UTC
+</ParamField>
+
+<ParamField query="sport" type="string">
+  Filter by sport name
+
+  Options: `soccer`, `basketball`, `baseball`, `tennis`, `american-football`, `ice-hockey`, `volleyball`, `handball`
+</ParamField>
+
+## Response
+
+Returns an array of trending events (max 5).
+
+Each event includes:
+- Full event details
+- Mr. Doge pick (if available)
+- All AI betting recommendations
+- Current view count
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/odds/trending-events?timezone=America/New_York&sport=soccer"
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "43089384",
+      "competitionId": 847,
+      "startDateTime": "2025-11-09T16:30:00.000Z",
+      "status": "upcoming",
+      "views": 104,
+      "sport": {
+        "name": "soccer"
+      },
+      "homeTeam": {
+        "id": 104932,
+        "name": "Manchester City"
+      },
+      "awayTeam": {
+        "id": 158346,
+        "name": "Liverpool"
+      },
+      "competition": {
+        "id": 847,
+        "caption": "Premier League"
+      },
+      "markets": [
+        {
+          "id": "1488408114",
+          "eventId": "43089384",
+          "betTypeSysname": "SOCCER_UNDER_OVER",
+          "betItems": [
+            {
+              "id": "6169425388",
+              "code": "U",
+              "caption": "Menos de 3,5",
+              "instanceCaption": "3,5",
+              "price": 1.62,
+              "oddsText": "1.62",
+              "isAvailable": true
+            },
+            {
+              "id": "6169425387",
+              "code": "O",
+              "caption": "Mais de 3,5",
+              "instanceCaption": "3,5",
+              "price": 2.2,
+              "oddsText": "2.20",
+              "isAvailable": true
+            }
+          ]
+        }
+      ],
+      "region": {
+        "id": 6,
+        "caption": "Inglaterra"
+      },
+      "mrDogePicks": {
+        "id": "cmhqld8560dwvs201835nhnp6",
+        "eventId": "43089384",
+        "pickType": "single",
+        "recommendations": ["cmhqld8070dwrs2018xwtzjio"],
+        "totalOdds": 3.8,
+        "featuredOrder": null,
+        "isActive": true,
+        "expiresAt": "2025-11-09T14:30:00.085Z",
+        "settled": false,
+        "result": null
+      },
+      "bettingRecommendations": []
+    }
+  ],
+  "count": 5
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Popular Events" icon="fire">
+    Show users what events are trending
+  </Card>
+
+  <Card title="Featured Picks" icon="star">
+    Highlight AI recommendations for popular games
+  </Card>
+
+  <Card title="Discovery" icon="compass">
+    Help users find interesting betting opportunities
+  </Card>
+
+  <Card title="Social Proof" icon="users">
+    Show which events have the most interest
+  </Card>
+</CardGroup>

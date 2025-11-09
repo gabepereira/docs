@@ -1,0 +1,82 @@
+---
+title: "Search Teams"
+api: "GET https://api.mrdoge.co/odds/teams"
+auth: "bearer"
+description: "Search for teams by name across all sports"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **1 credit** per request.
+</Warning>
+
+Search for teams across all sports and regions. Perfect for building team search autocomplete or finding specific teams.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="search" type="string">
+  Team name to search for
+
+  Example: `Arsenal`, `Lakers`, `Real Madrid`
+
+  Search is case-insensitive and matches partial names.
+</ParamField>
+
+<ParamField query="limit" type="string" default="50">
+  Maximum number of results
+
+  Max: `200`
+</ParamField>
+
+## Response
+
+Returns an array of team objects.
+
+<ResponseField name="id" type="integer">
+  Team ID
+</ResponseField>
+
+<ResponseField name="caption" type="string">
+  Team name
+</ResponseField>
+
+<ResponseField name="regionId" type="integer">
+  Region ID where team is based
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/odds/teams?search=Arsenal&limit=3"
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": 95450,
+      "name": "Arsenal",
+      "sportId": 1
+    },
+    {
+      "id": 66166,
+      "name": "Arsenal Tula",
+      "sportId": 1
+    },
+    {
+      "id": 148039,
+      "name": "Arsenal Kiev",
+      "sportId": 1
+    }
+  ],
+  "count": 3
+}
+```

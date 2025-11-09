@@ -1,0 +1,106 @@
+---
+title: "Get Processed Insights"
+api: "GET https://api.mrdoge.co/ai/processed-insights"
+auth: "bearer"
+description: "Get AI analysis and market efficiency data for events"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **2 credits** per request.
+</Warning>
+
+Returns processed AI insights for events including market efficiency scores and value opportunity analysis.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="eventId" type="string">
+  Filter by specific event
+</ParamField>
+
+<ParamField query="teamNames" type="string">
+  Filter by team names (comma-separated)
+</ParamField>
+
+<ParamField query="limit" type="string" default="5">
+  Maximum number of insights
+</ParamField>
+
+<ParamField query="timezone" type="string">
+  Timezone for date filtering
+</ParamField>
+
+<ParamField query="includeCompleted" type="string">
+  Include completed events
+
+  Values: `true` or `false`
+</ParamField>
+
+## Response
+
+Returns an array of processed insight objects containing:
+- Market efficiency scores
+- Value opportunity assessment
+- AI analysis data
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/ai/processed-insights?eventId=43089384"
+```
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "eventId": "43089384",
+      "marketEfficiencyScore": 0.85,
+      "valueOpportunities": {
+        "recommendations": [
+          {
+            "edge": 12.5,
+            "market": "SOCCER_MATCH_RESULT",
+            "confidence": "High"
+          },
+          {
+            "edge": 8.2,
+            "market": "SOCCER_UNDER_OVER",
+            "confidence": "Medium"
+          }
+        ]
+      },
+      "riskFactors": [],
+      "aiNotes": "Manchester City shows a clear advantage in offensive capabilities and home form. The Over 3.5 bet is supported by both teams' scoring patterns.\n\nConfidence: High confidence in the Away Win due to City's strong home performance and Liverpool's defensive vulnerabilities.",
+      "event": {
+        "homeTeam": "Manchester City",
+        "awayTeam": "Liverpool",
+        "commenceTime": "2025-11-09T16:30:00.000Z",
+        "league": "Premier League"
+      },
+      "analysisTimestamp": "2025-11-08T18:01:59.168Z"
+    }
+  ]
+}
+```
+
+## Market Efficiency Score
+
+The AI calculates a **Market Efficiency Score** (0-100) for each event:
+
+- **90-100**: Extremely efficient, rare value opportunities
+- **80-89**: Efficient market, requires deep analysis
+- **70-79**: Moderately efficient, value exists
+- **Below 70**: Inefficient market, multiple opportunities
+
+**What affects efficiency:**
+- League popularity (Premier League more efficient than lower tiers)
+- Time until kickoff (closer = more efficient)
+- Public attention (high-profile matches = more efficient)

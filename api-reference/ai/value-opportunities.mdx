@@ -1,0 +1,98 @@
+---
+title: "Get Top Value Opportunities"
+api: "GET https://api.mrdoge.co/ai/value-opportunities"
+auth: "bearer"
+description: "Get the highest-edge betting opportunities currently available"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **2 credits** per request.
+</Warning>
+
+Returns only the best value betting opportunities that meet your minimum edge threshold. This endpoint filters recommendations to show only the highest-quality opportunities.
+
+Perfect for finding the best bets quickly without browsing all recommendations.
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="minEdge" type="string" default="5">
+  Minimum edge percentage
+
+  Example: `7` returns only bets with 7%+ edge
+</ParamField>
+
+<ParamField query="confidence" type="string">
+  Filter by confidence level
+
+  Values: `High`, `Medium`, `Low`
+</ParamField>
+
+<ParamField query="limit" type="string" default="5">
+  Maximum number of opportunities
+</ParamField>
+
+<ParamField query="timezone" type="string">
+  Timezone for date filtering
+</ParamField>
+
+## Response
+
+<ResponseField name="opportunities" type="array">
+  Array of betting recommendations (same structure as [Betting Recommendations](/api-reference/ai/betting-recommendations))
+</ResponseField>
+
+<ResponseField name="summary" type="object">
+  <Expandable title="Summary Statistics">
+    <ResponseField name="totalOpportunities" type="integer">
+      Total number of opportunities found
+    </ResponseField>
+
+    <ResponseField name="averageEdge" type="number">
+      Average edge percentage across all opportunities
+    </ResponseField>
+
+    <ResponseField name="highConfidence" type="integer">
+      Number of high confidence opportunities
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example Request
+
+```bash
+curl -H "Authorization: Bearer sk_live_..." \
+  "https://api.mrdoge.co/ai/value-opportunities?minEdge=5&limit=2"
+```
+
+## Example Response
+
+```json
+{
+  "data": [],
+  "summary": {
+    "totalOpportunities": 0,
+    "averageEdge": 0,
+    "filters": {
+      "minEdge": 5
+    }
+  }
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Best Bets Widget" icon="trophy">
+    Display top value opportunities
+  </Card>
+
+  <Card title="Daily Highlights" icon="star">
+    Show best bets of the day
+  </Card>
+</CardGroup>

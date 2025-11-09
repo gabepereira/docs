@@ -1,0 +1,326 @@
+---
+title: "Get Event Details"
+api: "GET https://api.mrdoge.co/odds/events/{eventId}"
+auth: "bearer"
+description: "Get complete event information including teams, markets, odds, live data, and AI recommendations"
+---
+
+<Warning>
+  **Requires Authentication**: This endpoint requires an API key and costs **1 credit** per request.
+</Warning>
+
+This endpoint returns **everything** you need to display a complete event page:
+- Team information
+- All betting markets and odds
+- Live scores and statistics (if event is live)
+- AI betting recommendations
+- Mr. Doge picks for this event
+- Match simulation data
+- Event news and context
+
+Perfect for building detailed event pages in your application.
+
+<Note>
+  **View Tracking**: Each request increments the event's view count, helping us identify trending events.
+</Note>
+
+## Authorization
+
+<ParamField header="Authorization" type="string" required default="Bearer " placeholder="Bearer sk_live_...">
+  Your API key for authentication
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="eventId" type="string" required>
+  The unique event ID
+
+  Example: `evt_abc123`
+</ParamField>
+
+## Response
+
+Returns a complete event object with all related data.
+
+### Core Fields
+
+<ResponseField name="id" type="string">
+  Unique event ID
+</ResponseField>
+
+<ResponseField name="competitionId" type="integer">
+  Parent competition ID
+</ResponseField>
+
+<ResponseField name="regionId" type="integer">
+  Parent region ID
+</ResponseField>
+
+<ResponseField name="sportId" type="integer">
+  Sport ID
+</ResponseField>
+
+<ResponseField name="startDateTime" type="string">
+  Event start time (ISO 8601)
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Event status: `upcoming`, `live`, or `completed`
+</ResponseField>
+
+<ResponseField name="views" type="integer">
+  Number of views
+</ResponseField>
+
+### Relationships
+
+<ResponseField name="homeTeam" type="object">
+  Home team object with `id`, `caption`, and `regionId`
+</ResponseField>
+
+<ResponseField name="awayTeam" type="object">
+  Away team object
+</ResponseField>
+
+<ResponseField name="competition" type="object">
+  Competition object with `id`, `caption`, `regionId`, and nested `region`
+</ResponseField>
+
+<ResponseField name="region" type="object">
+  Region object
+</ResponseField>
+
+### Markets and Odds
+
+<ResponseField name="markets" type="array">
+  Array of betting markets for this event
+
+  <Expandable title="Market Object">
+    <ResponseField name="id" type="string">
+      Market ID
+    </ResponseField>
+
+    <ResponseField name="betTypeSysname" type="string">
+      Market type identifier
+
+      Examples:
+      - `SOCCER_MATCH_RESULT` - 1X2
+      - `SOCCER_UNDER_OVER` - Total goals
+      - `BASKETBALL_MATCH_RESULT_HANDICAP` - Spread
+    </ResponseField>
+
+    <ResponseField name="betItems" type="array">
+      Array of betting options
+
+      <Expandable title="BetItem Object">
+        <ResponseField name="id" type="string">
+          Bet item ID
+        </ResponseField>
+
+        <ResponseField name="code" type="string">
+          Outcome code (e.g., "1", "X", "2" for 1X2)
+        </ResponseField>
+
+        <ResponseField name="caption" type="string">
+          Human-readable caption (e.g., "Home Win", "Draw")
+        </ResponseField>
+
+        <ResponseField name="price" type="number">
+          Decimal odds (e.g., 2.10)
+        </ResponseField>
+
+        <ResponseField name="oddsText" type="string">
+          Odds as text (e.g., "2.10")
+        </ResponseField>
+
+        <ResponseField name="isAvailable" type="boolean">
+          Whether this bet is currently available
+        </ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Live Data
+
+<ResponseField name="liveEventData" type="array">
+  Array of live data objects (if event is live)
+
+  <Expandable title="LiveEventData Object">
+    <ResponseField name="eventId" type="string">
+      Event ID
+    </ResponseField>
+
+    <ResponseField name="phaseSysname" type="string">
+      Current match phase
+
+      Examples:
+      - `SOCCER_MATCH_FIRST_HALF`
+      - `SOCCER_MATCH_SECOND_HALF`
+      - `BASKETBALL_QUARTER_1`
+    </ResponseField>
+
+    <ResponseField name="isLive" type="boolean">
+      Whether event is currently live
+    </ResponseField>
+
+    <ResponseField name="liveDataJson" type="object">
+      Sport-specific live data including:
+      - Scores
+      - Statistics (corners, cards, fouls, etc.)
+      - Period/quarter scores
+      - Live odds
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### AI Data
+
+<ResponseField name="bettingRecommendations" type="array">
+  AI-generated betting recommendations for this event
+
+  See [Betting Recommendations](/api-reference/ai/betting-recommendations) for structure
+</ResponseField>
+
+<ResponseField name="mrDogePick" type="object">
+  Featured Mr. Doge pick for this event (if available)
+
+  See [Mr. Doge Picks](/api-reference/ai/mr-doge-picks) for structure
+</ResponseField>
+
+## Example Request
+
+<CodeGroup>
+```bash cURL
+curl https://api.mrdoge.co/odds/events/evt_abc123
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.mrdoge.co/odds/events/evt_abc123');
+const event = await response.json();
+console.log(event);
+```
+
+```python Python
+import requests
+
+response = requests.get('https://api.mrdoge.co/odds/events/evt_abc123')
+event = response.json()
+print(event)
+```
+</CodeGroup>
+
+## Example Response
+
+```json
+{
+  "id": "evt_abc123",
+  "competitionId": 1,
+  "regionId": 1,
+  "sportId": 1,
+  "startDateTime": "2025-11-08T15:00:00Z",
+  "status": "upcoming",
+  "views": 1250,
+  "metadata": {
+    "sportName": "soccer",
+    "homeTeamName": "Arsenal",
+    "awayTeamName": "Chelsea",
+    "homeTeamId": 100,
+    "awayTeamId": 101
+  },
+  "homeTeam": {
+    "id": 100,
+    "caption": "Arsenal",
+    "regionId": 1
+  },
+  "awayTeam": {
+    "id": 101,
+    "caption": "Chelsea",
+    "regionId": 1
+  },
+  "competition": {
+    "id": 1,
+    "caption": "Premier League",
+    "regionId": 1,
+    "region": {
+      "id": 1,
+      "caption": "England"
+    }
+  },
+  "markets": [
+    {
+      "id": "mkt_xyz789",
+      "betTypeSysname": "SOCCER_MATCH_RESULT",
+      "betItems": [
+        {
+          "id": "bet_123",
+          "code": "1",
+          "caption": "Arsenal",
+          "price": 2.10,
+          "oddsText": "2.10",
+          "isAvailable": true
+        },
+        {
+          "id": "bet_124",
+          "code": "X",
+          "caption": "Draw",
+          "price": 3.40,
+          "oddsText": "3.40",
+          "isAvailable": true
+        },
+        {
+          "id": "bet_125",
+          "code": "2",
+          "caption": "Chelsea",
+          "price": 3.75,
+          "oddsText": "3.75",
+          "isAvailable": true
+        }
+      ]
+    }
+  ],
+  "bettingRecommendations": [
+    {
+      "id": "rec_abc",
+      "outcome": "Arsenal",
+      "odds": 2.10,
+      "confidence": "High",
+      "edgePercentage": 6.8,
+      "kellyFraction": 0.032,
+      "rationale": [
+        "Arsenal excellent home form (8 wins in last 10)",
+        "Chelsea struggling away (2 wins in last 8)"
+      ],
+      "riskFactors": [
+        "Chelsea have key players returning from injury"
+      ]
+    }
+  ]
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Event Page" icon="file-lines">
+    Display complete event information with all markets and odds
+  </Card>
+
+  <Card title="Live Scores" icon="signal-stream">
+    Show real-time scores and match statistics
+  </Card>
+
+  <Card title="AI Recommendations" icon="robot">
+    Display value betting opportunities for this event
+  </Card>
+
+  <Card title="Odds Comparison" icon="scale-balanced">
+    Compare odds across different markets
+  </Card>
+</CardGroup>
+
+## Error Responses
+
+<ResponseField name="404 Not Found" type="error">
+  Event with specified ID does not exist
+</ResponseField>
