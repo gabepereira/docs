@@ -19,10 +19,7 @@
           },
           {
             "group": "Credits System",
-            "pages": [
-              "credits/overview",
-              "credits/pricing"
-            ]
+            "pages": ["credits/overview", "credits/pricing"]
           },
           {
             "group": "Core Concepts",
@@ -72,9 +69,9 @@
           "icon": "chart-line"
         },
         {
-          "anchor": "API Status",
-          "href": "https://status.mrdoge.co",
-          "icon": "signal-bars"
+          "anchor": "Get API Key",
+          "href": "https://mrdoge.co/dashboard",
+          "icon": "key"
         },
         {
           "anchor": "Community",
